@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Grid,
   InputAdornment,
@@ -15,22 +15,24 @@ import {
   ButtonGroup,
 } from "@mui/material";
 import Search from "@mui/icons-material/Search";
+import { getCABOApi } from "../../helpers/api";
 
-export default function SearchBar() {
+export default function SearchBar(props: any) {
+  const { searchBarValue, getSpeciesList, setSearchBarValue } = props;
+  const [options, setOptions] = useState([]);
+  useEffect(() => {
+    getCABOApi("scientific_names_in_spectra/", {}).then((res: any) => {
+      const names = res.map((r: any) => ({
+        label: r.scientific_name,
+        id: r.scientific_name,
+      }));
+      setOptions(names);
+    });
+  }, []);
   return (
     <Grid container justifyContent="center">
       <Grid item xs={6}>
         <Tabs>
-          <Tab label="Search by Species" />
-          <Tab
-            label={
-              <FormControl variant="standard" sx={{ width: 20 }}>
-                <Select value="Species1">
-                  <MenuItem>Species 1</MenuItem>
-                </Select>
-              </FormControl>
-            }
-          ></Tab>
           <Tab label="Filter by: date" />
           <Tab label="location" />
           <Tab label="project" />
@@ -45,11 +47,15 @@ export default function SearchBar() {
             <Autocomplete
               id="input-with-icon-textfield"
               placeholder="Enter species name"
-              options={{}}
+              options={options}
               renderInput={(params) => (
                 <TextField {...params} label="Species" />
               )}
               sx={{ width: "450px" }}
+              value={searchBarValue}
+              onChange={(e: any) =>
+                setSearchBarValue(e.currentTarget.textContent)
+              }
             />
             <Button>Search</Button>
           </ButtonGroup>
