@@ -18,15 +18,22 @@ import Search from "@mui/icons-material/Search";
 import { getCABOApi } from "../../helpers/api";
 
 export default function SearchBar(props: any) {
-  const { searchBarValue, getSpeciesList, setSearchBarValue } = props;
+  const {
+    searchBarValue,
+    getSpeciesList,
+    setSearchBarValue,
+    searchButtonClicked,
+  } = props;
   const [options, setOptions] = useState([]);
   useEffect(() => {
-    getCABOApi("scientific_names_in_spectra/", {}).then((res: any) => {
-      const names = res.map((r: any) => ({
-        label: r.scientific_name,
-        id: r.scientific_name,
-      }));
-      setOptions(names);
+    getCABOApi("scientific_names_in_spectra/", {}, "get").then((res: any) => {
+      if (res) {
+        const names = res.map((r: any) => ({
+          label: r.scientific_name,
+          id: r.scientific_name,
+        }));
+        setOptions(names);
+      }
     });
   }, []);
   return (
@@ -41,7 +48,7 @@ export default function SearchBar(props: any) {
       <Grid container justifyContent="center">
         <Grid item xs={12}>
           <ButtonGroup>
-            <Button>
+            <Button sx={{ cursor: "default" }}>
               <Search />
             </Button>
             <Autocomplete
@@ -57,7 +64,7 @@ export default function SearchBar(props: any) {
                 setSearchBarValue(e.currentTarget.textContent)
               }
             />
-            <Button>Search</Button>
+            <Button onClick={searchButtonClicked}>Search</Button>
           </ButtonGroup>
         </Grid>
       </Grid>

@@ -1,0 +1,59 @@
+#spectra {
+  overflow: visible;
+  padding: 50px;
+  width: 100%;
+}
+.main-spectra-graph svg {
+  margin: auto;
+  display: block !important;
+}
+.main-spectra-graph {
+  margin: auto;
+  display: block !important;
+}
+
+div.tooltip {
+  position: absolute;
+  text-align: center;
+  /* width: 200px;					*/
+  padding: 5px 7px;
+  font: 12px sans-serif;
+  background: lightblue;
+  border: 0px;
+  border-radius: 5px;
+  pointer-events: none;
+}
+
+.spectra-card {
+  margin-top: 60px !important;
+}
+
+.graph-card {
+  min-height: 300px;
+}
+
+.switch-transmittance
+  .custom-control-input:checked
+  ~ .custom-control-label::before {
+  background-color: #ffa500 !important;
+  border-color: #ffa500 !important;
+}
+
+.switches {
+  /*max-width:200px;*/
+  margin-bottom: 0px !important;
+}
+
+.custom-switch {
+  display: inline !important;
+  margin-left: 12px;
+}
+
+.reset-zoom {
+  height: 30px;
+  padding: 5px 8px !important;
+  text-align: center;
+  line-height: 1.2em !important;
+  margin-left: 20px;
+  float: right;
+}
