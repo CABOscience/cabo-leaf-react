@@ -40,7 +40,7 @@ export const getCABOApi = async (
 
 export const getCABOApiMulti = async (
   endpoint: string,
-  paramArray: Array<string>,
+  paramArray: Array<any>,
   method: string = "get"
 ) => {
   let result;
@@ -48,18 +48,37 @@ export const getCABOApiMulti = async (
   const headers = {
     Authorization: `Bearer ${import.meta.env.VITE_APP_CABO_API_TOKEN_ADMIN}`,
   };
-  const gets = paramArray.map((p: any) =>
-    axios
-      .get(base_url + endpoint, {
-        params: {
-          species: p,
-        },
-        headers: headers,
-      })
-      .catch(function (error) {
-        console.log(error);
-      })
-  );
+  let gets;
+  if (method === "get") {
+    gets = paramArray.map((p: any) =>
+      axios
+        .get(base_url + endpoint, {
+          params: {
+            ...p,
+          },
+          headers: headers,
+        })
+        .catch(function (error) {
+          console.log(error);
+        })
+    );
+  } else {
+    gets = paramArray.map((p: any) =>
+      axios
+        .post(
+          base_url + endpoint,
+          {
+            ...p,
+          },
+          {
+            headers: headers,
+          }
+        )
+        .catch(function (error) {
+          console.log(error);
+        })
+    );
+  }
   try {
     result = await axios.all(gets);
   } catch (error) {
@@ -79,14 +98,14 @@ export const processCSVResponse = (data: any) => {
 };
 
 export const searchSpectra = async (
-  searchBarValue: string,
+  searchSpecies: Array<string>,
   geomFilter: string,
   projectsSelected: Array<string>,
   searchStartDate: string,
   searchEndDate: string
 ) => {
   if (
-    searchBarValue.trim() !== "" ||
+    searchSpecies.length !== 0 ||
     geomFilter !== "" ||
     projectsSelected.length === 0 ||
     searchStartDate !== ""
@@ -99,16 +118,13 @@ export const searchSpectra = async (
       });
       projects = pA.join(",");
     }
-    return await getCABOApi(
-      "leaf_spectra/search/taxa",
-      {
-        taxa: searchBarValue,
-        start_date: searchStartDate,
-        end_date: searchEndDate,
-        geometry: geomFilter,
-        projects: projects,
-      },
-      "post"
-    );
+    const paramObj = searchSpecies.map((sp: any) => ({
+      taxa: sp,
+      start_date: searchStartDate,
+      end_date: searchEndDate,
+      geometry: geomFilter,
+      projects: projects,
+    }));
+    return await getCABOApiMulti("leaf_spectra/search/taxa", paramObj, "post");
   }
 };

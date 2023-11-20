@@ -363,4 +363,7 @@ export default {
       );
     }
   },
+  clear: function (spectraGraph) {
+    d3.select("#" + spectraGraph).html("");
+  },
 };

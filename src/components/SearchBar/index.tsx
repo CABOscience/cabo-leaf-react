@@ -13,9 +13,17 @@ import {
   FormGroup,
   Button,
   ButtonGroup,
+  Chip,
+  Paper,
 } from "@mui/material";
+import {
+  CustomButtonCABO,
+  CustomAutocomplete,
+  CustomPaper,
+} from "../../styles/customMUI";
 import Search from "@mui/icons-material/Search";
 import { getCABOApi } from "../../helpers/api";
+import { colors } from "../../helpers/constants";
 
 export default function SearchBar(props: any) {
   const {
@@ -24,7 +32,7 @@ export default function SearchBar(props: any) {
     setSearchBarValue,
     searchButtonClicked,
   } = props;
-  const [options, setOptions] = useState([]);
+  const [options, setOptions] = useState([{ label: "", id: "" }]);
   useEffect(() => {
     getCABOApi("scientific_names_in_spectra/", {}, "get").then((res: any) => {
       if (res) {
@@ -36,35 +44,59 @@ export default function SearchBar(props: any) {
       }
     });
   }, []);
+
   return (
     <Grid container justifyContent="center">
       <Grid item xs={6}>
-        <Tabs>
-          <Tab label="Filter by: date" />
-          <Tab label="location" />
-          <Tab label="project" />
+        <Tabs value={false}>
+          <Tab value={1} label="Filter by: date" />
+          <Tab value={2} label="location" />
+          <Tab value={3} label="project" />
         </Tabs>
       </Grid>
       <Grid container justifyContent="center">
         <Grid item xs={12}>
           <ButtonGroup>
-            <Button sx={{ cursor: "default" }}>
+            <CustomButtonCABO sx={{ cursor: "default" }}>
               <Search />
-            </Button>
-            <Autocomplete
-              id="input-with-icon-textfield"
-              placeholder="Enter species name"
+            </CustomButtonCABO>
+            <CustomAutocomplete
+              multiple
+              id="size-small-filled-multi"
+              size="small"
               options={options}
-              renderInput={(params) => (
-                <TextField {...params} label="Species" />
-              )}
-              sx={{ width: "450px" }}
+              getOptionLabel={(option: any) => option.label}
+              sx={{ width: "650px" }}
               value={searchBarValue}
-              onChange={(e: any) =>
-                setSearchBarValue(e.currentTarget.textContent)
+              PaperComponent={CustomPaper}
+              onChange={(e: any, value: any) => setSearchBarValue(value)}
+              renderTags={(value, getTagProps) =>
+                value.map((option: any, index) => (
+                  <Chip
+                    variant="outlined"
+                    label={option.label}
+                    size="small"
+                    sx={{ backgroundColor: `${colors[index]}`, color: "white" }}
+                    {...getTagProps({ index })}
+                  />
+                ))
               }
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  variant="filled"
+                  label="Species"
+                  placeholder={
+                    searchBarValue.length === 0 ? "Enter species name" : ""
+                  }
+                />
+              )}
             />
-            <Button onClick={searchButtonClicked}>Search</Button>
+            {false && (
+              <CustomButtonCABO onClick={searchButtonClicked}>
+                Search
+              </CustomButtonCABO>
+            )}
           </ButtonGroup>
         </Grid>
       </Grid>

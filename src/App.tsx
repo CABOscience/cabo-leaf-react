@@ -4,65 +4,84 @@ import { Loader } from "./components/Loader";
 import SearchBar from "./components/SearchBar";
 import LeafSpectra from "./components/LeafSpectra";
 import { searchSpectra } from "./helpers/api";
+import theme from "./styles/theme";
+import { ThemeProvider, createTheme } from "@mui/material/styles";
 import "./App.css";
 
 function App() {
   const [isSearching, setIsSearching] = useState(false);
   const [projectsSelected, setProjectsSelected] = useState([]);
-  const [searchBarValue, setSearchBarValue] = useState("");
+  const [searchSpecies, setSearchSpecies] = useState([]);
+  const [searchBarValue, setSearchBarValue] = useState([]);
   const [searchStartDate, setSearchStartDate] = useState("");
   const [searchEndDate, setSearchEndDate] = useState("");
   const [searchSpectraIDs, setSearchSpectraIDs] = useState([]);
   const [geomFilter, setGeomFilter] = useState("");
   const [showSpectra, setShowSpectra] = useState(false);
-  const [speciesSelected, setSpeciesSelected] = useState("");
-  const [speciesList, setSpeciesList] = useState<Array<string>>([]);
 
-  const searchButtonClicked = () => {
-    searchSpectra(
-      searchBarValue,
-      geomFilter,
-      projectsSelected,
-      searchStartDate,
-      searchEndDate
-    ).then((result: any) => {
-      const ids = result.map((s: any) => s.sample_id);
-      setSearchSpectraIDs(ids);
-    });
-    setSpeciesSelected(searchBarValue);
-    setSpeciesList([searchBarValue]);
-  };
+  useEffect(() => {
+    let mounted: boolean = true;
+    setShowSpectra(false);
+    if (searchBarValue.length === 0) {
+      setSearchSpecies([]);
+      setIsSearching(false);
+    } else {
+      const sp: any = searchBarValue.map((s: any) => s.id);
+      setIsSearching(true);
+      searchSpectra(
+        sp,
+        geomFilter,
+        projectsSelected,
+        searchStartDate,
+        searchEndDate
+      ).then((result: any) => {
+        const ids = result.map((s: any) => s.sample_id);
+        if (mounted) {
+          setSearchSpectraIDs(ids);
+          setSearchSpecies(sp);
+        }
+      });
+      return () => (mounted = false);
+    }
+  }, [searchBarValue]);
 
   return (
-    <Box>
-      <Grid container sx={{ maxWidth: "1000px" }} justifyContent="center">
-        <Grid item xs={8} lg={6}>
-          <img
-            alt="CABO logo"
-            src="CABO_color.png"
-            className="main-logo"
-            style={{ width: "100%", position: "relative" }}
-          />
+    <ThemeProvider theme={theme}>
+      <Box
+        sx={{
+          top: "20vh",
+          left: "0vw",
+        }}
+      >
+        <Grid container sx={{ width: "100%" }} justifyContent="center">
+          <Grid item xs={8} lg={6}>
+            <img
+              alt="CABO logo"
+              src="CABO_color.png"
+              className="main-logo"
+              style={{ width: "100%", maxWidth: "500px", position: "relative" }}
+            />
+          </Grid>
         </Grid>
-      </Grid>
-      <SearchBar
-        {...{
-          setSearchBarValue,
-          searchBarValue,
-          searchButtonClicked,
-        }}
-      />
-      {isSearching && <Loader />}
-      <LeafSpectra
-        {...{
-          whichSpectra: "main",
-          speciesSelected,
-          speciesList,
-          showSpectra,
-          setShowSpectra,
-        }}
-      />
-    </Box>
+        <SearchBar
+          {...{
+            setSearchBarValue,
+            searchBarValue,
+          }}
+        />
+        {isSearching && <Loader />}
+        <LeafSpectra
+          {...{
+            whichSpectra: "main",
+            searchSpecies,
+            searchBarValue,
+            showSpectra,
+            setShowSpectra,
+            setIsSearching,
+          }}
+        />
+      </Box>
+    </ThemeProvider>
   );
 }
 
