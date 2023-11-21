@@ -3,7 +3,7 @@ import { createTheme } from "@mui/material/styles";
 import { Box, autocompleteClasses } from "@mui/material/";
 
 // A custom theme for this app
-export const theme = {
+export const theme: any = {
   palette: {
     primary: {
       main: "#006e70",
@@ -55,4 +55,15 @@ declare module '@mui/material/styles/createTheme' {
   interface ThemeOptions extends CustomTheme {}
 }*/
 
-export default createTheme(theme);
+export default createTheme({
+  ...theme,
+  components: {
+    MuiDateCalendar: {
+      styleOverrides: {
+        root: {
+          backgroundColor: "white",
+        },
+      },
+    },
+  },
+});

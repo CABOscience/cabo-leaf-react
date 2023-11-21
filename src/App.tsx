@@ -18,6 +18,7 @@ function App() {
   const [searchSpectraIDs, setSearchSpectraIDs] = useState([]);
   const [geomFilter, setGeomFilter] = useState("");
   const [showSpectra, setShowSpectra] = useState(false);
+  const [spFreq, setSpFreq] = useState({});
 
   useEffect(() => {
     let mounted: boolean = true;
@@ -35,9 +36,15 @@ function App() {
         searchStartDate,
         searchEndDate
       ).then((result: any) => {
-        const ids = result.map((s: any) => s.sample_id);
         if (mounted) {
+          let ids: any = [];
+          let spFr: any = {};
+          result.forEach((r: any) => {
+            ids.concat(r.data.map((s: any) => s.sample_id));
+            spFr[r.data[0].scientific_name] = r.data.length;
+          });
           setSearchSpectraIDs(ids);
+          setSpFreq(spFr);
           setSearchSpecies(sp);
         }
       });
@@ -67,6 +74,9 @@ function App() {
           {...{
             setSearchBarValue,
             searchBarValue,
+            spFreq,
+            setSearchStartDate,
+            setSearchEndDate,
           }}
         />
         {isSearching && <Loader />}

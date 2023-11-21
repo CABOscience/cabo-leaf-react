@@ -5,11 +5,11 @@ export default {
     this.which = which;
     this.box = {};
     if (spectra_type == "main") {
-      this.box.margin = { top: 0, right: 50, bottom: 80, left: 50 };
+      this.box.margin = { top: 0, right: 70, bottom: 80, left: 70 };
       this.box.width =
-        0.7 * window.innerWidth - this.box.margin.left - this.box.margin.right; // Use the window's width
+        0.53 * window.innerWidth - this.box.margin.left - this.box.margin.right; // Use the window's width
       this.box.height =
-        0.4 * window.innerWidth - this.box.margin.top - this.box.margin.bottom; // Use the window's height
+        0.35 * window.innerWidth - this.box.margin.top - this.box.margin.bottom; // Use the window's height
     } else {
       this.box.margin = { top: 0, right: 50, bottom: 80, left: 75 };
       this.box.width = 740 - this.box.margin.left - this.box.margin.right; // Use the window's width
@@ -136,7 +136,7 @@ export default {
       .attr("class", "tooltip")
       .style("opacity", 0);
   },
-  meanLeafSpectra: function (data, spectra_type, color, animate) {
+  meanLeafSpectra: function (data, spectra_type, color, animate, showRange) {
     data.slice().sort((a, b) => d3.descending(a.wavelength, b.wavelength));
     const self = this;
 
@@ -179,7 +179,7 @@ export default {
           return self.box.y_r(d.val);
         });
 
-      if (this.showRange == "true") {
+      if (showRange) {
         const lineMin = d3
           .line()
           .x(function (d) {
@@ -261,7 +261,7 @@ export default {
 					s.min=1-s.min;
 				})*/
 
-      if (this.showRange == "true") {
+      if (showRange) {
         const tlineMin = d3
           .line()
           .x(function (d) {
