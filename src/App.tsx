@@ -19,6 +19,7 @@ function App() {
   const [geomFilter, setGeomFilter] = useState("");
   const [showSpectra, setShowSpectra] = useState(false);
   const [spFreq, setSpFreq] = useState({});
+  const [searchIndex, setSearchIndex] = useState(0);
 
   useEffect(() => {
     let mounted: boolean = true;
@@ -40,8 +41,13 @@ function App() {
           let ids: any = [];
           let spFr: any = {};
           result.forEach((r: any) => {
-            ids.concat(r.data.map((s: any) => s.sample_id));
-            spFr[r.data[0].scientific_name] = r.data.length;
+            if (r.data.length > 0) {
+              ids.concat(r.data.map((s: any) => s.sample_id));
+              spFr[r.data[0].scientific_name] = r.data.length;
+            } else {
+              setShowSpectra(true);
+              setIsSearching(false);
+            }
           });
           setSearchSpectraIDs(ids);
           setSpFreq(spFr);
@@ -50,14 +56,17 @@ function App() {
       });
       return () => (mounted = false);
     }
-  }, [searchBarValue]);
+  }, [searchBarValue, searchIndex]);
+
+  const searchButtonClicked = () => {
+    setSearchIndex((old) => old + 1);
+  };
 
   return (
     <ThemeProvider theme={theme}>
       <Box
         sx={{
-          top: "20vh",
-          left: "0vw",
+          marginBottom: "30vh",
         }}
       >
         <Grid container sx={{ width: "100%" }} justifyContent="center">
@@ -75,7 +84,10 @@ function App() {
             setSearchBarValue,
             searchBarValue,
             spFreq,
+            searchStartDate,
+            searchEndDate,
             setSearchStartDate,
+            searchButtonClicked,
             setSearchEndDate,
           }}
         />
@@ -88,6 +100,7 @@ function App() {
             showSpectra,
             setShowSpectra,
             setIsSearching,
+            searchIndex,
           }}
         />
       </Box>
