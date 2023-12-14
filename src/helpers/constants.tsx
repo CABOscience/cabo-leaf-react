@@ -1,4 +1,4 @@
-export const basic_colors = [
+export const basicColors = [
   "#008bae",
   "#65318c",
   "#8bc442",
@@ -18,7 +18,7 @@ export const colors = [
   "#0756a1",
 ];
 
-export const traits_table = {
+export const traitsTable = {
   leaf_mass_per_area_g_m2: "leaf_area_and_water_samples",
   leaf_dry_matter_content_mg_g: "leaf_area_and_water_samples",
   equivalent_water_thickness_cm: "leaf_area_and_water_samples",

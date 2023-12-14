@@ -90,7 +90,7 @@ export const getCABOApiMulti = async (
 export const processCSVResponse = (data: any) => {
   //const url = window.URL.createObjectURL(new Blob([data.response.data]));
   const link = document.createElement("a");
-  link.href = "/download/" + data.response.data;
+  link.href = "https://data.caboscience.org/download/" + data;
   link.target = "_blank";
   link.setAttribute("download", "");
   document.body.appendChild(link);
@@ -127,4 +127,34 @@ export const searchSpectra = async (
     }));
     return await getCABOApiMulti("leaf_spectra/search/taxa", paramObj, "post");
   }
+};
+
+export const downloadTaxaMeanCSV = async (species_selected: any) => {
+  getCABOApi(
+    "leaf_spectra/csv/",
+    {
+      taxa: species_selected,
+      type: "mean",
+    },
+    "post"
+  ).then((resp: any) => {
+    const d = Date.now();
+    processCSVResponse(resp);
+  });
+};
+
+export const getAllTraits = async (sample_ids) => {
+  let ids: any = [];
+  sample_ids.map((s) => {
+    ids.push("'" + s + "'");
+  });
+  ids = ids.join(",");
+  return await getCABOApi(
+    "traits/",
+    {
+      ids: ids,
+      type: "raw",
+    },
+    "post"
+  );
 };

@@ -38,6 +38,7 @@ import { MapContainer, TileLayer, FeatureGroup, useMap } from "react-leaflet";
 import { EditControl } from "react-leaflet-draw";
 import "/node_modules/leaflet/dist/leaflet.css";
 import "/node_modules/leaflet-draw/dist/leaflet.draw.css";
+import { t } from "../../helpers/translations";
 
 dayjs.extend(customParseFormat);
 
@@ -134,7 +135,7 @@ export default function SearchBar(props: any) {
           <Tabs value={tab}>
             <Tab
               value={1}
-              label={`Filter by: date`}
+              label={t(`filter_by_date`)}
               onClick={() => clickTab(1)}
               icon={
                 searchStartDate !== "" || searchEndDate !== "" ? (
@@ -145,8 +146,8 @@ export default function SearchBar(props: any) {
               }
               iconPosition="end"
             />
-            <Tab value={2} label="location" onClick={() => clickTab(2)} />
-            <Tab value={3} label="project" onClick={() => clickTab(3)} />
+            <Tab value={2} label={t("geography")} onClick={() => clickTab(2)} />
+            <Tab value={3} label={t("project")} onClick={() => clickTab(3)} />
           </Tabs>
         </Grid>
         <Grid container justifyContent="center">
@@ -194,9 +195,9 @@ export default function SearchBar(props: any) {
                   <TextField
                     {...params}
                     variant="filled"
-                    label="Species"
+                    label={t("species")}
                     placeholder={
-                      searchBarValue.length === 0 ? "Enter species name" : ""
+                      searchBarValue.length === 0 ? t("enter_species_name") : ""
                     }
                   />
                 )}
@@ -226,7 +227,7 @@ export default function SearchBar(props: any) {
           spacing={3}
         >
           <Grid item>
-            <Typography>Select a date range</Typography>
+            <Typography>{t("select_the_date_range")}</Typography>
           </Grid>
           <LocalizationProvider
             dateAdapter={AdapterDayjs}

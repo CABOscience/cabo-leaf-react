@@ -22,6 +22,8 @@ import {
 } from "../../styles/customMUI";
 import "./style.css";
 import { theme } from "../../styles/theme";
+import { t } from "../../helpers/translations";
+import { downloadTaxaMeanCSV } from "../../helpers/api";
 
 export default function LeafSpectra(props: any) {
   const {
@@ -101,6 +103,11 @@ export default function LeafSpectra(props: any) {
     }
   }, [spectraData, reflectance, transmittance, showRange]);
 
+  const downloadCSV = () => {
+    const searchSpecies: any = searchBarValue.map((s: any) => s.id);
+    downloadTaxaMeanCSV(searchSpecies);
+  };
+
   return (
     <>
       <Grow in={showSpectra && !emptySpectra} timeout={1000}>
@@ -127,7 +134,7 @@ export default function LeafSpectra(props: any) {
               <Typography
                 sx={{ fontWeight: "bold", height: "35px", lineHeight: 2.5 }}
               >
-                Mean spectra
+                {t("mean_spectra")}
               </Typography>
             </Grid>
             <Grid
@@ -164,7 +171,7 @@ export default function LeafSpectra(props: any) {
                       }
                     />
                   }
-                  label="Transmittance"
+                  label={t("transmittance")}
                   labelPlacement="end"
                 />
                 <FormControlLabel
@@ -176,15 +183,16 @@ export default function LeafSpectra(props: any) {
                       onChange={(event) => setShowRange(event.target.checked)}
                     />
                   }
-                  label="Ranges"
+                  label={t("ranges")}
                   labelPlacement="end"
                 />
               </FormGroup>
               <Button
                 sx={{ right: "10px", position: "absolute" }}
                 startIcon={<DownloadForOfflineIcon />}
+                onClick={downloadCSV}
               >
-                Download as CSV
+                {t("download_csv")}
               </Button>
             </Grid>
             <Grid item xs={6}>
@@ -215,7 +223,7 @@ export default function LeafSpectra(props: any) {
           }}
         >
           <Container>
-            <Typography variant="h5">No spectra available</Typography>
+            <Typography variant="h5">{t("no_spectra")}</Typography>
           </Container>
         </Paper>
       )}

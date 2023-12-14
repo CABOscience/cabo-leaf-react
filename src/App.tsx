@@ -3,10 +3,12 @@ import { Box, Grid } from "@mui/material";
 import { Loader } from "./components/Loader";
 import SearchBar from "./components/SearchBar";
 import LeafSpectra from "./components/LeafSpectra";
+import TraitsOverall from "./components/TraitsOverall";
 import { searchSpectra } from "./helpers/api";
 import theme from "./styles/theme";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import "./App.css";
+import { t, lang } from "./helpers/translations";
 
 function App() {
   const [isSearching, setIsSearching] = useState(false);
@@ -20,6 +22,7 @@ function App() {
   const [showSpectra, setShowSpectra] = useState(false);
   const [spFreq, setSpFreq] = useState({});
   const [searchIndex, setSearchIndex] = useState(0);
+  const [showOverallTraits, setShowOverallTraits] = useState<boolean>(false);
 
   useEffect(() => {
     let mounted: boolean = true;
@@ -42,7 +45,7 @@ function App() {
           let spFr: any = {};
           result.forEach((r: any) => {
             if (r.data.length > 0) {
-              ids.concat(r.data.map((s: any) => s.sample_id));
+              ids = ids.concat(r.data.map((s: any) => s.sample_id));
               spFr[r.data[0].scientific_name] = r.data.length;
             } else {
               setShowSpectra(true);
@@ -50,6 +53,7 @@ function App() {
             }
           });
           setSearchSpectraIDs(ids);
+          setShowOverallTraits(true);
           setSpFreq(spFr);
           setSearchSpecies(sp);
         }
@@ -101,6 +105,13 @@ function App() {
             setShowSpectra,
             setIsSearching,
             searchIndex,
+          }}
+        />
+        <TraitsOverall
+          {...{
+            searchSpecies,
+            searchSpectraIDs,
+            showOverallTraits,
           }}
         />
       </Box>
