@@ -1,9 +1,23 @@
 import React, { useState, useEffect } from "react";
-import { Card, CardContent, Tabs, Tab, Typography } from "@mui/material";
+import {
+  Card,
+  CardContent,
+  Tabs,
+  Tab,
+  Typography,
+  Grid,
+  Grow,
+} from "@mui/material";
 import TraitsOverallTab from "../TraitsOverallTab";
 import { getAllTraits } from "../../helpers/api";
 import { traitsTable } from "../../helpers/constants";
 import { t } from "../../helpers/translations";
+import {
+  CustomButtonCABO,
+  CustomAutocomplete,
+  CustomPaper,
+} from "../../styles/customMUI";
+import { theme } from "../../styles/theme";
 import _ from "lodash";
 
 const TraitsOverall = (props) => {
@@ -17,6 +31,14 @@ const TraitsOverall = (props) => {
     carbon_fractions_bags: {},
     pigments_extracts: {},
   });
+
+  /*const traitsCat: any = {
+    leaf_area_and_water_samples: {},
+    icp_leaf_element_concentrations: {},
+    c_n_leaf_concentrations: {},
+    carbon_fractions_bags: {},
+    pigments_extracts: {},
+  };*/
 
   useEffect(() => {
     if (searchSpectraIDs) {
@@ -54,16 +76,14 @@ const TraitsOverall = (props) => {
   }, [searchSpectraIDs]);
 
   useEffect(() => {
-    _.mapValues(traitSelection, (sample) => {
-      _.mapKeys(sample, (value, key) => {
+    _.mapKeys(traitSelection, (valueType, keyType) => {
+      _.mapKeys(valueType, (value, key) => {
         if (!isNaN(value)) {
-          setTraitsCat((prevState) => ({
-            ...prevState,
-            [sample]: true, /// WRONG!!! FIX HERE
-          }));
+          traitsCat[traitsTable[key]][key] = true;
         }
       });
     });
+    setTraitsCat(traitsCat);
   }, [traitSelection]);
 
   const hasTraitsCat = (cat: string): boolean => {
@@ -80,42 +100,89 @@ const TraitsOverall = (props) => {
   };
 
   return (
-    <Card hidden={!showOverallTraits} sx={{ backgroundColor: "white" }}>
-      <CardContent>
-        <Typography variant="h5" gutterBottom>
-          {t("traits")}
-        </Typography>
-        <Tabs
-          value={activeTrait}
-          onChange={(_, newValue) => setActiveTrait(newValue)}
-          orientation="vertical"
-          variant="scrollable"
-          textColor="primary"
-          indicatorColor="primary"
-        >
-          {Object.keys(traitsCat).map((thisCat, indexCat) => (
-            <Tab
-              key={indexCat}
-              label={t(thisCat)}
-              disabled={!hasTraitsCat(thisCat)}
-            />
-          ))}
-        </Tabs>
-        {Object.keys(traitsCat).map((thisCat, indexCat) => (
-          <div key={indexCat} hidden={activeTrait !== indexCat}>
-            <CardContent>
-              <TraitsOverallTab
-                key={indexCat}
-                traitCat={thisCat}
-                traitsThisCat={traitsCat[thisCat]}
-                indexCat={indexCat}
-                traitSelection={traitSelection}
-              />
-            </CardContent>
-          </div>
-        ))}
-      </CardContent>
-    </Card>
+    <>
+      {showOverallTraits && (
+        <CustomPaper elevation={3}>
+          <Grid
+            container
+            justifyContent="center"
+            sx={{
+              display: "block",
+              paddingLeft: "0px",
+              margin: "75px 0 0 0",
+            }}
+          >
+            <Grid
+              item
+              xs={12}
+              sx={{
+                color: "white",
+                height: "35px",
+                backgroundColor: theme.palette.primary.main,
+                width: "100%",
+              }}
+            >
+              <Typography
+                sx={{ fontWeight: "bold", height: "35px", lineHeight: 2.5 }}
+              >
+                {t("traits")}
+              </Typography>
+            </Grid>
+            <Grid item>
+              <Grid container>
+                <Grid item xs={3}>
+                  <Tabs
+                    value={activeTrait}
+                    onChange={(_, newValue) => setActiveTrait(newValue)}
+                    orientation="vertical"
+                    variant="scrollable"
+                    textColor="primary"
+                    indicatorColor="primary"
+                    sx={{ width: "100%" }}
+                  >
+                    {Object.keys(traitsCat).map((thisCat, indexCat) => (
+                      <Tab
+                        key={indexCat}
+                        label={t(thisCat)}
+                        disabled={hasTraitsCat(thisCat)}
+                      />
+                    ))}
+                  </Tabs>
+                </Grid>
+                <Grid item xs={9}>
+                  <Grid container>
+                    {Object.keys(traitsCat).map((thisCat, indexCat) => {
+                      if (Object.keys(traitsCat[thisCat]).length > 0) {
+                        return (
+                          <Grid
+                            item
+                            xs={12}
+                            key={indexCat}
+                            hidden={activeTrait !== indexCat}
+                          >
+                            <CardContent>
+                              <TraitsOverallTab
+                                key={indexCat}
+                                traitCat={thisCat}
+                                traitsThisCat={traitsCat[thisCat]}
+                                indexCat={indexCat}
+                                traitSelection={traitSelection}
+                                searchSpecies={searchSpecies}
+                              />
+                            </CardContent>
+                          </Grid>
+                        );
+                      }
+                      return <></>;
+                    })}
+                  </Grid>
+                </Grid>
+              </Grid>
+            </Grid>
+          </Grid>
+        </CustomPaper>
+      )}
+    </>
   );
 };
 

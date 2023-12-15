@@ -4,10 +4,12 @@ import { Loader } from "./components/Loader";
 import SearchBar from "./components/SearchBar";
 import LeafSpectra from "./components/LeafSpectra";
 import TraitsOverall from "./components/TraitsOverall";
+import MapOverall from "./components/MapOverall";
 import { searchSpectra } from "./helpers/api";
 import theme from "./styles/theme";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import "./App.css";
+import { getCABOApiMulti } from "./helpers/api";
 import { t, lang } from "./helpers/translations";
 
 function App() {
@@ -22,11 +24,13 @@ function App() {
   const [showSpectra, setShowSpectra] = useState(false);
   const [spFreq, setSpFreq] = useState({});
   const [searchIndex, setSearchIndex] = useState(0);
+  const [isAdmin, setIsAdmin] = useState(true);
   const [showOverallTraits, setShowOverallTraits] = useState<boolean>(false);
 
   useEffect(() => {
     let mounted: boolean = true;
     setShowSpectra(false);
+    setShowOverallTraits(false);
     if (searchBarValue.length === 0) {
       setSearchSpecies([]);
       setIsSearching(false);
@@ -66,6 +70,23 @@ function App() {
     setSearchIndex((old) => old + 1);
   };
 
+  const accessibleSamples = () => {
+    if (isAdmin) {
+      return searchSpectraIDs.filter((p: any) => {
+        return p.permission == 1;
+      });
+    } else {
+      return searchSpectraIDs;
+    }
+  };
+
+  useEffect(() => {
+    let samps = accessibleSamples().map((m: any) => ({
+      sample_id: m.sample_id,
+    }));
+    getCABOApiMulti("plants_samples", samps, "get");
+  }, [searchSpectraIDs]);
+
   return (
     <ThemeProvider theme={theme}>
       <Box
@@ -84,6 +105,7 @@ function App() {
           </Grid>
         </Grid>
         <SearchBar
+          key="searchBar"
           {...{
             setSearchBarValue,
             searchBarValue,
@@ -97,6 +119,7 @@ function App() {
         />
         {isSearching && <Loader />}
         <LeafSpectra
+          key="leafSpectra"
           {...{
             whichSpectra: "main",
             searchSpecies,
@@ -108,6 +131,15 @@ function App() {
           }}
         />
         <TraitsOverall
+          key="traitsOverall"
+          {...{
+            searchSpecies,
+            searchSpectraIDs,
+            showOverallTraits,
+          }}
+        />
+        <MapOverall
+          key="mapOverall"
           {...{
             searchSpecies,
             searchSpectraIDs,

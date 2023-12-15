@@ -2,40 +2,46 @@ import React, { useEffect, useRef } from "react";
 import * as d3 from "d3";
 import { getCABOApi } from "../../helpers/api";
 import { basicColors, traitsTable } from "../../helpers/constants";
+import { Box } from "@mui/material";
+import { t } from "../../helpers/translations";
 
 const TraitDensity = (props: any) => {
   const {
     type,
     trait,
     traitVal,
-    traitGraph,
     traitSelection,
     traitType,
     indexCat,
-    speciesList,
+    searchSpecies,
   } = props;
   const densityRef = useRef(null);
 
+  const traitGraph = `trait-graph-${trait}-${indexCat}`;
+
+  const getAllValuesForOneTrait = async (trait: string) => {
+    try {
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   useEffect(() => {
-    const getAllValuesForOneTrait = async (trait: string) => {
-      try {
-        getCABOApi(
-          "/traits/all/",
-          {
-            params: {
-              trait: trait,
-              table: traitsTable[trait],
-            },
-          },
-          "get"
-        ).then((res) => {
-          density(res.data);
-        });
-      } catch (error) {
-        console.error(error);
+    let ignore = false;
+    getCABOApi(
+      "traits/all/",
+      {
+        trait: trait,
+        table: traitsTable[trait],
+      },
+      "get"
+    ).then((res) => {
+      if (!ignore) {
+        density(res);
       }
-    };
+    });
     getAllValuesForOneTrait(props.trait);
+    return () => (ignore = true);
   }, [trait]);
 
   const density = (data: any) => {
@@ -57,6 +63,9 @@ const TraitDensity = (props: any) => {
       var plot_height = height;
     }
     // append the svg object to the body of the page
+
+    var svg = d3.select("#" + traitGraph).empty();
+
     var svg = d3
       .select("#" + traitGraph)
       .append("svg")
@@ -144,7 +153,7 @@ const TraitDensity = (props: any) => {
         })
         .attr("r", 5)
         .style("fill", function (d: any) {
-          return basicColors[speciesList.indexOf(d.scientific_name)];
+          return basicColors[searchSpecies.indexOf(d.scientific_name)];
         })
         .style("fill-opacity", 0.3)
         .style("stroke-opacity", 0)
@@ -172,10 +181,11 @@ const TraitDensity = (props: any) => {
   };
 
   return (
-    <div
-      id={`trait-graph-${props.trait}-${props.indexCat}`}
+    <Box
+      id={traitGraph}
       ref={densityRef}
-    ></div>
+      sx={{ width: "100%", height: "150px", display: "block" }}
+    ></Box>
   );
 };
 
