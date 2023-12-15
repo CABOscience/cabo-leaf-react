@@ -7,7 +7,7 @@ const TraitsOverallTab = (props) => {
   return (
     <div className="app-body row traits">
       <Box>
-        {Object.entries(props.traitsCat).map(([name, thisTrait], index) => (
+        {Object.entries(props.traitsThisCat).map(([name, thisTrait], index) => (
           <Box>
             <Box>
               <Typography>{name}</Typography>
@@ -31,7 +31,3 @@ const TraitsOverallTab = (props) => {
 };
 
 export default TraitsOverallTab;
-
-function keyName(name: string): string {
-  return "overall-" + name;
-}

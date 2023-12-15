@@ -59,7 +59,7 @@ const TraitsOverall = (props) => {
         if (!isNaN(value)) {
           setTraitsCat((prevState) => ({
             ...prevState,
-            [value]: true,
+            [sample]: true, /// WRONG!!! FIX HERE
           }));
         }
       });
@@ -107,9 +107,8 @@ const TraitsOverall = (props) => {
               <TraitsOverallTab
                 key={indexCat}
                 traitCat={thisCat}
-                traitsCat={traitsCat}
+                traitsThisCat={traitsCat[thisCat]}
                 indexCat={indexCat}
-                hasTraits={traitsCat[thisCat]}
                 traitSelection={traitSelection}
               />
             </CardContent>
