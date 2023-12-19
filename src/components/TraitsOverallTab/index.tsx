@@ -4,7 +4,7 @@ import TraitDensity from "../TraitDensity";
 import { t } from "../../helpers/translations";
 
 const TraitsOverallTab = (props) => {
-  const { traitsThisCat } = props;
+  const { traitsThisCat, traitSelection, indexCat, thisCat } = props;
   const [comp, setComp] = useState(<></>);
   useEffect(() => {
     setComp(
@@ -21,9 +21,9 @@ const TraitsOverallTab = (props) => {
                 <TraitDensity
                   key={`overall-"${name}`}
                   traitVal={thisTrait}
-                  indexCat={props.indexCat}
-                  traitType={props.thisCat}
-                  traitSelection={props.traitSelection}
+                  indexCat={indexCat}
+                  traitType={thisCat}
+                  traitSelection={traitSelection}
                   trait={name}
                   searchSpecies={props.searchSpecies}
                   type="overall"
@@ -34,7 +34,7 @@ const TraitsOverallTab = (props) => {
         ))}
       </Grid>
     );
-  }, [traitsThisCat]);
+  }, [traitsThisCat, traitSelection]);
 
   return <>{comp}</>;
 };

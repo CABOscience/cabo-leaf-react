@@ -42,7 +42,7 @@ const TraitDensity = (props: any) => {
     });
     getAllValuesForOneTrait(props.trait);
     return () => (ignore = true);
-  }, [trait]);
+  }, [trait, traitSelection]);
 
   const density = (data: any) => {
     // set the dimensions and margins of the graph

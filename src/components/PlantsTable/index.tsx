@@ -12,7 +12,13 @@ import {
   TableBody,
   Grow,
 } from "@mui/material";
-import { DataGrid, GridColDef, GridValueGetterParams } from "@mui/x-data-grid";
+import {
+  DataGrid,
+  GridColDef,
+  GridValueGetterParams,
+  GridToolbarContainer,
+  GridToolbarFilterButton,
+} from "@mui/x-data-grid";
 import TraitsOverallTab from "../TraitsOverallTab";
 import { getAllTraits } from "../../helpers/api";
 import { traitsTable } from "../../helpers/constants";
@@ -27,7 +33,7 @@ import _ from "lodash";
 
 const PlantsTable = (props) => {
   const [rows, setRows] = useState([]);
-  const { plants } = props;
+  const { plants, setOpenSampleModal, setClickedSample } = props;
 
   useEffect(() => {
     if (plants.length !== 0) {
@@ -44,47 +50,104 @@ const PlantsTable = (props) => {
           ro.id = ids.join(",");
           ro.scientific_name = m.scientific_name;
           ro.site =
-            m.sites.verbatim_site == null
-              ? m.sites.site_id
-              : m.sites.verbatim_site;
-          ro.edit = <Button>Click</Button>;
+            m.sites?.verbatim_site == null
+              ? m.sites?.site_id
+              : m.sites?.verbatim_site;
           return ro;
         });
       setRows(rows);
     }
   }, [plants]);
 
+  const OpenDetailsButton = (params) => {
+    const [count, setCount] = React.useState(0);
+
+    return (
+      <Button
+        variant="contained"
+        size="small"
+        style={{ marginLeft: 16 }}
+        tabIndex={params.hasFocus ? 0 : -1}
+        onClick={() => {
+          setClickedSample(params.id);
+          setOpenSampleModal(true);
+        }}
+      >
+        {t("details")}
+      </Button>
+    );
+  };
+
   const columns: GridColDef[] = [
     {
       field: "id",
       headerName: "SampleIds",
-      width: 250,
+      width: 200,
       editable: false,
     },
     {
       field: "scientific_name",
       headerName: "Scientific name",
-      width: 250,
+      width: 200,
       editable: true,
     },
     {
       field: "site",
       headerName: "Site name",
       type: "number",
-      width: 250,
+      width: 200,
       editable: true,
     },
     {
       field: "edit",
-      headerName: "Edit",
+      headerName: "",
       description: "This column has a value getter and is not sortable.",
       sortable: false,
-      width: 160,
+      width: 450,
+      renderCell: (params: any) => (
+        <>
+          <OpenDetailsButton params={params} />
+          <Button
+            variant="contained"
+            size="small"
+            style={{ marginLeft: 16 }}
+            tabIndex={params.hasFocus ? 0 : -1}
+          >
+            {t("download_spectra")}
+          </Button>
+          <Button
+            variant="contained"
+            size="small"
+            style={{ marginLeft: 16 }}
+            tabIndex={params.hasFocus ? 0 : -1}
+          >
+            {t("download_traits")}
+          </Button>
+        </>
+      ),
     },
   ];
 
   const traitsColors = (index: number): string => {
     return props.store.state.basicColors[index];
+  };
+
+  const CustomToolbar = () => {
+    return (
+      <GridToolbarContainer>
+        <GridToolbarFilterButton />
+        <Button variant="outlined" size="small">
+          <Typography sx={{ fontSize: "12px" }}>
+            {t("download_selected_spectra")}
+          </Typography>
+        </Button>
+        <Button variant="outlined" size="small">
+          <Typography sx={{ fontSize: "12px" }}>
+            {t("download_selected_traits")}
+          </Typography>
+        </Button>
+      </GridToolbarContainer>
+    );
   };
 
   return (
@@ -125,6 +188,9 @@ const PlantsTable = (props) => {
                     pageSize: 15,
                   },
                 },
+              }}
+              slots={{
+                toolbar: CustomToolbar,
               }}
               pageSizeOptions={[5]}
               checkboxSelection

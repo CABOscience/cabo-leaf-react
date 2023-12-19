@@ -6,6 +6,7 @@ import LeafSpectra from "./components/LeafSpectra";
 import TraitsOverall from "./components/TraitsOverall";
 import MapOverall from "./components/MapOverall";
 import PlantsTable from "./components/PlantsTable";
+import SampleModal from "./components/SampleModal";
 import { searchSpectra } from "./helpers/api";
 import theme from "./styles/theme";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
@@ -28,6 +29,8 @@ function App() {
   const [isAdmin, setIsAdmin] = useState(true);
   const [plants, setPlants] = useState([]);
   const [showOverallTraits, setShowOverallTraits] = useState<boolean>(false);
+  const [openSampleModal, setOpenSampleModal] = useState(false);
+  const [clickedSample, setClickedSample] = useState("");
 
   useEffect(() => {
     let mounted: boolean = true;
@@ -51,7 +54,7 @@ function App() {
           let spFr: any = {};
           result.forEach((r: any) => {
             if (r.data.length > 0) {
-              ids = r.data.map((s: any) => s);
+              ids = ids.concat(r.data.map((s: any) => s));
               spFr[r.data[0].scientific_name] = r.data.length;
             } else {
               setShowSpectra(true);
@@ -174,7 +177,17 @@ function App() {
             plants,
           }}
         />
-        <PlantsTable key="plantsTable" plants={plants}></PlantsTable>
+        <PlantsTable
+          key="plantsTable"
+          plants={plants}
+          setClickedSample={setClickedSample}
+          setOpenSampleModal={setOpenSampleModal}
+        ></PlantsTable>
+        <SampleModal
+          openSampleModal={openSampleModal}
+          setOpenSampleModal={setOpenSampleModal}
+          clickedSample={clickedSample}
+        ></SampleModal>
       </Box>
     </ThemeProvider>
   );

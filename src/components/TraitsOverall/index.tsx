@@ -33,10 +33,12 @@ const TraitsOverall = (props) => {
   });
 
   useEffect(() => {
+    let ignore = false;
+    setTraitSelection(0);
     if (searchSpectraIDs) {
       const ids = searchSpectraIDs.map((s) => s.sample_id);
       getAllTraits(ids).then((vals) => {
-        if (vals) {
+        if (vals && !ignore) {
           var traits = Object.keys(traitsTable);
           traits.push("scientific_name");
           const data = _.pickBy(
@@ -65,6 +67,9 @@ const TraitsOverall = (props) => {
         }
       });
     }
+    return () => {
+      ignore = true;
+    };
   }, [searchSpectraIDs]);
 
   useEffect(() => {
