@@ -32,17 +32,10 @@ const TraitsOverall = (props) => {
     pigments_extracts: {},
   });
 
-  /*const traitsCat: any = {
-    leaf_area_and_water_samples: {},
-    icp_leaf_element_concentrations: {},
-    c_n_leaf_concentrations: {},
-    carbon_fractions_bags: {},
-    pigments_extracts: {},
-  };*/
-
   useEffect(() => {
     if (searchSpectraIDs) {
-      getAllTraits(searchSpectraIDs).then((vals) => {
+      const ids = searchSpectraIDs.map((s) => s.sample_id);
+      getAllTraits(ids).then((vals) => {
         if (vals) {
           var traits = Object.keys(traitsTable);
           traits.push("scientific_name");
@@ -70,7 +63,6 @@ const TraitsOverall = (props) => {
           );
           setTraitSelection(data);
         }
-        //setTraitsTable(data);
       });
     }
   }, [searchSpectraIDs]);

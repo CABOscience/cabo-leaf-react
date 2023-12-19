@@ -19,24 +19,65 @@ import "/node_modules/leaflet/dist/leaflet.css";
 import MarkerClusterGroup from "react-leaflet-cluster";
 
 const MapOverall = (props) => {
-  const MyTileLayer = () => {
+  const { plants } = props;
+  const [markers, setMarkers] = useState([]);
+  const [bounds, setBounds] = useState([]);
+
+  useEffect(() => {
+    if (plants.length > 0) {
+      let b: any = [];
+      const s = plants.filter(
+        (s) =>
+          typeof s !== "undefined" &&
+          s.geometry !== null &&
+          s.geometry.coordinates[1] !== 0
+      );
+      s.forEach((m: any) => {
+        if (m.sites !== null) {
+          m.site =
+            m.sites.verbatim_site == null
+              ? m.sites.site_id
+              : m.sites.verbatim_site;
+          m.geometry.coordinates = [
+            m.geometry.coordinates[1],
+            m.geometry.coordinates[0],
+          ];
+          b.push([m.geometry.coordinates[0], m.geometry.coordinates[1]]);
+          let ids: any = [];
+          m.bulk_leaf_samples.map((i: any) => {
+            ids.push(i.sample_id);
+          });
+          m.sample_ids = ids.join(",");
+        }
+      });
+      setMarkers(s);
+      setBounds(b);
+    }
+  }, [plants]);
+
+  const MyTileLayer = (props) => {
+    const { markers, bounds } = props;
     const map = useMap();
 
     useEffect(() => {
       if (typeof window !== "undefined") {
         map.invalidateSize(false);
       }
-    }, [map]);
+      if (bounds.length > 0) {
+        map.fitBounds(bounds);
+      }
+    }, [map, bounds]);
 
     return (
       <Container sx={{ width: "100%", height: "100%" }}>
         <MarkerClusterGroup chunkedLoading>
-          {(addressPoints as AdressPoint).map((address, index) => (
+          {markers.map((geo: any, index) => (
             <Marker
               key={index}
-              position={[address[0], address[1]]}
-              title={address[2]}
-              icon={customIcon}
+              position={[
+                geo.geometry.coordinates[0],
+                geo.geometry.coordinates[1],
+              ]}
             ></Marker>
           ))}
         </MarkerClusterGroup>
@@ -79,10 +120,11 @@ const MapOverall = (props) => {
           <MapContainer
             center={[45.5, -73.5]}
             zoom={10}
+            maxZoom={18}
             scrollWheelZoom={false}
             style={{ width: "100%", height: "450px" }}
           >
-            <MyTileLayer />
+            <MyTileLayer markers={markers} bounds={bounds} />
           </MapContainer>
         </Grid>
       </Grid>

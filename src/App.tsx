@@ -5,6 +5,7 @@ import SearchBar from "./components/SearchBar";
 import LeafSpectra from "./components/LeafSpectra";
 import TraitsOverall from "./components/TraitsOverall";
 import MapOverall from "./components/MapOverall";
+import PlantsTable from "./components/PlantsTable";
 import { searchSpectra } from "./helpers/api";
 import theme from "./styles/theme";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
@@ -25,6 +26,7 @@ function App() {
   const [spFreq, setSpFreq] = useState({});
   const [searchIndex, setSearchIndex] = useState(0);
   const [isAdmin, setIsAdmin] = useState(true);
+  const [plants, setPlants] = useState([]);
   const [showOverallTraits, setShowOverallTraits] = useState<boolean>(false);
 
   useEffect(() => {
@@ -49,7 +51,7 @@ function App() {
           let spFr: any = {};
           result.forEach((r: any) => {
             if (r.data.length > 0) {
-              ids = ids.concat(r.data.map((s: any) => s.sample_id));
+              ids = r.data.map((s: any) => s);
               spFr[r.data[0].scientific_name] = r.data.length;
             } else {
               setShowSpectra(true);
@@ -62,8 +64,10 @@ function App() {
           setSearchSpecies(sp);
         }
       });
-      return () => (mounted = false);
     }
+    return () => {
+      mounted = false;
+    };
   }, [searchBarValue, searchIndex]);
 
   const searchButtonClicked = () => {
@@ -71,7 +75,7 @@ function App() {
   };
 
   const accessibleSamples = () => {
-    if (isAdmin) {
+    if (!isAdmin) {
       return searchSpectraIDs.filter((p: any) => {
         return p.permission == 1;
       });
@@ -81,10 +85,33 @@ function App() {
   };
 
   useEffect(() => {
-    let samps = accessibleSamples().map((m: any) => ({
-      sample_id: m.sample_id,
-    }));
-    getCABOApiMulti("plants_samples", samps, "get");
+    let ignore = false;
+    if (searchSpectraIDs.length > 0) {
+      getCABOApiMulti("plants_samples", accessibleSamples(), "get").then(
+        (s) => {
+          if (!ignore) {
+            var pl: any = [];
+            let plants = s.map((m) => m.data[0]);
+            plants = plants.filter((s) => typeof s !== "undefined");
+            var ids = plants.map((p) => {
+              return p.fulcrum_id;
+            });
+            plants.map((p: any) => {
+              var i = ids.indexOf(p.fulcrum_id);
+              if (typeof pl[i] === "undefined") {
+                pl[i] = p;
+              } else {
+                pl[i].bulk_leaf_samples.push(p.bulk_leaf_samples[0]);
+              }
+            });
+            setPlants(pl);
+          }
+        }
+      );
+    }
+    return () => {
+      ignore = true;
+    };
   }, [searchSpectraIDs]);
 
   return (
@@ -144,8 +171,10 @@ function App() {
             searchSpecies,
             searchSpectraIDs,
             showOverallTraits,
+            plants,
           }}
         />
+        <PlantsTable key="plantsTable" plants={plants}></PlantsTable>
       </Box>
     </ThemeProvider>
   );

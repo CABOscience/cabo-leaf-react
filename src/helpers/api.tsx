@@ -158,3 +158,12 @@ export const getAllTraits = async (sample_ids) => {
     "post"
   );
 };
+
+export const getManyPlants = async (sample_ids) => {
+  const params = sample_ids.map((s) => {
+    return {
+      sample_ids: s,
+    };
+  });
+  return await getCABOApiMulti("plants_samples/", params, "get");
+};
