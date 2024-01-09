@@ -100,6 +100,7 @@ export const messages: any = {
     tag: "Tag",
     species_list: "Species list",
     no_spectra: "No spectra available",
+    sample_date: "Sample date",
   },
   fr: {
     results: "Résultats",
@@ -193,5 +194,6 @@ export const messages: any = {
     tag: "Étiquette",
     species_list: "Liste d'espèces",
     no_spectra: "Aucun spectre n'est disponible",
+    sample_date: "Date de l'échantillon",
   },
 };

@@ -88,6 +88,12 @@ function App() {
   };
 
   useEffect(() => {
+    if (clickedSample) {
+      setOpenSampleModal(true);
+    }
+  }, [clickedSample]);
+
+  useEffect(() => {
     let ignore = false;
     if (searchSpectraIDs.length > 0) {
       getCABOApiMulti("plants_samples", accessibleSamples(), "get").then(
@@ -187,6 +193,7 @@ function App() {
           openSampleModal={openSampleModal}
           setOpenSampleModal={setOpenSampleModal}
           clickedSample={clickedSample}
+          plants={plants}
         ></SampleModal>
       </Box>
     </ThemeProvider>

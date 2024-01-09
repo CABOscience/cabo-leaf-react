@@ -1,17 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {
-  Card,
-  CardContent,
-  Tabs,
-  Tab,
-  Button,
-  Typography,
-  Grid,
-  Table,
-  TableCell,
-  TableBody,
-  Grow,
-} from "@mui/material";
+import { Button, Typography, Grid, Grow } from "@mui/material";
 import {
   DataGrid,
   GridColDef,
@@ -19,9 +7,6 @@ import {
   GridToolbarContainer,
   GridToolbarFilterButton,
 } from "@mui/x-data-grid";
-import TraitsOverallTab from "../TraitsOverallTab";
-import { getAllTraits } from "../../helpers/api";
-import { traitsTable } from "../../helpers/constants";
 import { t } from "../../helpers/translations";
 import {
   CustomButtonCABO,
@@ -43,11 +28,7 @@ const PlantsTable = (props) => {
         })
         .map(function (m) {
           let ro = m;
-          let ids: any = [];
-          m.bulk_leaf_samples.map((i: any) => {
-            ids.push(i.sample_id);
-          });
-          ro.id = ids.join(",");
+          ro.id = m.plant_id;
           ro.scientific_name = m.scientific_name;
           ro.site =
             m.sites?.verbatim_site == null
@@ -69,8 +50,7 @@ const PlantsTable = (props) => {
         style={{ marginLeft: 16 }}
         tabIndex={params.hasFocus ? 0 : -1}
         onClick={() => {
-          setClickedSample(params.id);
-          setOpenSampleModal(true);
+          setClickedSample(params.params.id);
         }}
       >
         {t("details")}
@@ -81,7 +61,7 @@ const PlantsTable = (props) => {
   const columns: GridColDef[] = [
     {
       field: "id",
-      headerName: "SampleIds",
+      headerName: "Plant ID",
       width: 200,
       editable: false,
     },
