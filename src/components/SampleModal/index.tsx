@@ -81,6 +81,10 @@ const SampleModal = (props) => {
     };
   }, [clickedSample, plants]);
 
+  useEffect(() => {
+    //leafSampleIds;
+  }, [activeTab, clickedSample]);
+
   return (
     <Modal
       open={openSampleModal}
@@ -175,8 +179,8 @@ const SampleModal = (props) => {
             </Box>
           </Grid>
         )}
-        {activeTable === 1 && (
-          <LeafSampleSpectra leafSampleIds={leafSampleIds} />
+        {activeTab === 1 && (
+          <LeafSampleSpectra selectedSample={selectedSample} />
         )}
       </Grid>
     </Modal>

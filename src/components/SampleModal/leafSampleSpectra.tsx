@@ -9,6 +9,10 @@ import {
   Switch,
   Container,
   Button,
+  Radio,
+  RadioGroup,
+  FormControl,
+  FormLabel,
 } from "@mui/material";
 import DownloadForOfflineIcon from "@mui/icons-material/DownloadForOffline";
 import { getCABOApi, getCABOApiMulti } from "../../helpers/api";
@@ -27,7 +31,7 @@ import { downloadTaxaMeanCSV } from "../../helpers/api";
 
 export default function LeafSampleSpectra(props: any) {
   const {
-    leafSampleIds,
+    selectedSample,
     //searchSpecies,
     searchBarValue,
     whichSpectra,
@@ -39,19 +43,17 @@ export default function LeafSampleSpectra(props: any) {
   } = props;
   const [transmittance, setTransmittance] = useState(false);
   const [reflectance, setReflectance] = useState(true);
-  const [spectraGraphId, setSpectraGraphId] = useState("leafSpectraGraph");
+  const [spectraGraphId, setSpectraGraphId] = useState("sample-spectra");
   const [spectraData, setSpectraData] = useState([]);
   const [showRange, setShowRange] = useState(true);
   const [emptySpectra, setEmptySpectra] = useState(false);
+  const [selectedLeaves, setSelectedLeaves] = useState(["1"]);
 
   useEffect(() => {
     let ignore = false;
-    const searchSpecies: any = searchBarValue.map((s: any) => s.id);
     spectra.clear("leafSpectraGraph");
-    let ids = leafSampleIds.split(",");
-    ids = ids.map((i) => {
-      return parseInt(i);
-    });
+    let ids = selectedSample.split(",");
+    ids = ids.map((i) => parseInt(i));
     //headers.post["Content-Type"] ="application/x-www-form-urlencoded";
     getCABOApi(
       "leaf_spectra_raw/",
@@ -61,7 +63,7 @@ export default function LeafSampleSpectra(props: any) {
       "post"
     )
       .then((result) => {
-        setSpectraData(result.data);
+        setSpectraData(result);
       })
       .catch((error) => {
         console.log(error);
@@ -69,44 +71,35 @@ export default function LeafSampleSpectra(props: any) {
     return () => {
       ignore = true;
     };
-  }, [leafSampleIds]);
-
-  useEffect(() => {
-    spectra.clear("leafSpectraGraph");
-    let which = reflectance ? "reflectance" : "none";
-    which = transmittance ? "transmittance" : which;
-    which = reflectance && transmittance ? "both" : which;
-    const sl: any = spectraData.map((m: any) => m.data.length);
-    if (sl.some((x: boolean) => x)) {
-      setEmptySpectra(false);
-      spectra.drawBox(which, "main", "spectraGraph");
-      let i = 1;
-      setIsSearching(false);
-      setShowSpectra(true);
-      const searchSpecies: any = searchBarValue.map((s: any) => s.id);
-      spectraData.forEach((s: any) => {
-        if (s.data[0]) {
-          const color =
-            colors[searchSpecies.indexOf(s.data[0].scientific_name)];
-          let animate = false;
-          if (i == s.data.length) {
-            animate = true;
-          }
-          spectra.meanLeafSpectra(s.data, "main", color, animate, showRange);
-        }
-        i++;
-      });
-    } else {
-      setEmptySpectra(true);
-      setShowSpectra(true);
-      setIsSearching(false);
-    }
-  }, [spectraData, reflectance, transmittance, showRange]);
+  }, [selectedSample]);
 
   const downloadCSV = () => {
     const searchSpecies: any = searchBarValue.map((s: any) => s.id);
     downloadTaxaMeanCSV(searchSpecies);
   };
+
+  const leafSelection = (index, sel) => {
+    setSelectedLeaves(sel);
+  };
+
+  useEffect(() => {
+    let which = reflectance ? "reflectance" : "none";
+    which = transmittance ? "transmittance" : which;
+    which = reflectance && transmittance ? "both" : which;
+    spectra.drawBox(which, "main", "sample-spectra");
+    let i = 1;
+    //setIsSearching(false);
+    //setShowSpectra(true);
+
+    for (let i = 1; i <= 6; i++) {
+      if (selectedLeaves?.includes(i.toString())) {
+        const tl = spectraData.filter((t: any) => {
+          return t.leaf_number == i;
+        });
+        spectra.meanLeafSpectra(tl, "sample-spectra", colors[i - 1]);
+      }
+    }
+  }, [selectedLeaves, spectraData, reflectance, transmittance]);
 
   return (
     <>
@@ -134,7 +127,7 @@ export default function LeafSampleSpectra(props: any) {
               <Typography
                 sx={{ fontWeight: "bold", height: "35px", lineHeight: 2.5 }}
               >
-                {t("mean_spectra")}
+                {t("leaf_spectra")}
               </Typography>
             </Grid>
             <Grid
@@ -187,6 +180,47 @@ export default function LeafSampleSpectra(props: any) {
                   labelPlacement="end"
                 />
               </FormGroup>
+
+              <FormGroup aria-label="position" row sx={{}}>
+                <FormControlLabel
+                  value="top"
+                  control={
+                    <Switch
+                      color="primary"
+                      checked={reflectance}
+                      onChange={(event) => setReflectance(event.target.checked)}
+                    />
+                  }
+                  label="Reflectance"
+                  labelPlacement="end"
+                />
+                <FormControlLabel
+                  value="end"
+                  control={
+                    <Switch
+                      color="primary"
+                      checked={transmittance}
+                      onChange={(event) =>
+                        setTransmittance(event.target.checked)
+                      }
+                    />
+                  }
+                  label={t("transmittance")}
+                  labelPlacement="end"
+                />
+                <FormControlLabel
+                  value="end"
+                  control={
+                    <Switch
+                      color="primary"
+                      checked={showRange}
+                      onChange={(event) => setShowRange(event.target.checked)}
+                    />
+                  }
+                  label={t("ranges")}
+                  labelPlacement="end"
+                />
+              </FormGroup>
               <Button
                 sx={{ right: "10px", position: "absolute" }}
                 startIcon={<DownloadForOfflineIcon />}
@@ -199,7 +233,7 @@ export default function LeafSampleSpectra(props: any) {
               <div id="spectra-container" className="row">
                 <div
                   id={spectraGraphId}
-                  className="main-spectra-graph"
+                  className="sample-spectra-graph"
                   style={{
                     width: "90%",
                     height: "100%",
