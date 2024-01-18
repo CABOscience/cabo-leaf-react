@@ -98,6 +98,7 @@ export default function LeafSampleSpectra(props: any) {
   };
 
   useEffect(() => {
+    spectra.clear("sample-spectra");
     if (spectraData.length > 0) {
       let which = reflectance ? "reflectance" : "none";
       which = transmittance ? "transmittance" : which;
@@ -125,32 +126,21 @@ export default function LeafSampleSpectra(props: any) {
   return (
     <>
       <Grow in={showSpectra && !emptySpectra} timeout={1000}>
-        <CustomPaper elevation={3}>
+        <CustomPaper
+          elevation={0}
+          sx={{
+            margin: "0px auto",
+          }}
+        >
           <Grid
             container
             justifyContent="center"
             sx={{
               display: "block",
               paddingLeft: "0px",
-              margin: "0",
+              margin: "0px 0px 20px 20px ",
             }}
           >
-            <Grid
-              item
-              xs={12}
-              sx={{
-                color: "white",
-                height: "35px",
-                backgroundColor: theme.palette.primary.main,
-                width: "100%",
-              }}
-            >
-              <Typography
-                sx={{ fontWeight: "bold", height: "35px", lineHeight: 2.5 }}
-              >
-                {t("leaf_spectra")}
-              </Typography>
-            </Grid>
             <Grid
               item
               xs={12}
@@ -186,18 +176,6 @@ export default function LeafSampleSpectra(props: any) {
                     />
                   }
                   label={t("transmittance")}
-                  labelPlacement="end"
-                />
-                <FormControlLabel
-                  value="end"
-                  control={
-                    <Switch
-                      color="primary"
-                      checked={showRange}
-                      onChange={(event) => setShowRange(event.target.checked)}
-                    />
-                  }
-                  label={t("ranges")}
                   labelPlacement="end"
                 />
               </FormGroup>
@@ -259,7 +237,7 @@ export default function LeafSampleSpectra(props: any) {
                   className="sample-spectra-graph"
                   style={{
                     width: "90%",
-                    height: "100%",
+                    height: "90%",
                     position: "relative",
                   }}
                 ></div>

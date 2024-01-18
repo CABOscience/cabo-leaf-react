@@ -121,7 +121,7 @@ const SampleModal = (props) => {
           </Tabs>
         </Grid>
         <Grid item xs={12} sx={{ textAlign: "center" }}>
-          <FormControl sx={{ m: 1, minWidth: 80, marginTop: 3 }}>
+          <FormControl sx={{ m: 1, minWidth: 80, marginTop: 1 }} size="small">
             <InputLabel id="leaf-sample-select">{t("sample_date")}</InputLabel>
             <Select
               labelId="leaf-sample-select"
@@ -131,6 +131,7 @@ const SampleModal = (props) => {
               autoWidth
               variant="outlined"
               onChange={(e, value: any) => setSelectedSample(value)}
+              sx={{ padding: "2px" }}
             >
               {sampleOptions}
             </Select>
@@ -142,11 +143,11 @@ const SampleModal = (props) => {
               <Box
                 component="img"
                 sx={{
-                  height: "100%",
                   maxHeight: 900,
                   maxWidth: 400,
                   margin: "auto",
                   position: "relative",
+                  height: "60vh",
                 }}
                 alt="Plant photo"
                 src={images[activeStep]}
