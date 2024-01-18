@@ -9,6 +9,7 @@ import {
   Switch,
   Container,
   Button,
+  Checkbox,
   Radio,
   RadioGroup,
   FormControl,
@@ -36,8 +37,6 @@ export default function LeafSampleSpectra(props: any) {
     searchBarValue,
     whichSpectra,
     speciesList,
-    showSpectra,
-    setShowSpectra,
     setIsSearching,
     searchIndex,
   } = props;
@@ -47,7 +46,15 @@ export default function LeafSampleSpectra(props: any) {
   const [spectraData, setSpectraData] = useState([]);
   const [showRange, setShowRange] = useState(true);
   const [emptySpectra, setEmptySpectra] = useState(false);
-  const [selectedLeaves, setSelectedLeaves] = useState(["1"]);
+  const [selectedLeaves, setSelectedLeaves] = useState({
+    "1": true,
+    "2": false,
+    "3": false,
+    "4": false,
+    "5": false,
+    "6": false,
+  });
+  const [showSpectra, setShowSpectra] = useState(false);
 
   useEffect(() => {
     let ignore = false;
@@ -64,6 +71,11 @@ export default function LeafSampleSpectra(props: any) {
     )
       .then((result) => {
         setSpectraData(result);
+        if (result.length > 0) {
+          setEmptySpectra(false);
+        } else {
+          setEmptySpectra(true);
+        }
       })
       .catch((error) => {
         console.log(error);
@@ -78,26 +90,35 @@ export default function LeafSampleSpectra(props: any) {
     downloadTaxaMeanCSV(searchSpecies);
   };
 
-  const leafSelection = (index, sel) => {
-    setSelectedLeaves(sel);
+  const handleLeafCheck = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSelectedLeaves({
+      ...selectedLeaves,
+      [event.target.name]: event.target.checked,
+    });
   };
 
   useEffect(() => {
-    let which = reflectance ? "reflectance" : "none";
-    which = transmittance ? "transmittance" : which;
-    which = reflectance && transmittance ? "both" : which;
-    spectra.drawBox(which, "main", "sample-spectra");
-    let i = 1;
-    //setIsSearching(false);
-    //setShowSpectra(true);
+    if (spectraData.length > 0) {
+      let which = reflectance ? "reflectance" : "none";
+      which = transmittance ? "transmittance" : which;
+      which = reflectance && transmittance ? "both" : which;
+      spectra.drawBox(which, "sample", "sample-spectra");
+      let i = 1;
+      //setIsSearching(false);
+      setShowSpectra(true);
 
-    for (let i = 1; i <= 6; i++) {
-      if (selectedLeaves?.includes(i.toString())) {
-        const tl = spectraData.filter((t: any) => {
-          return t.leaf_number == i;
-        });
-        spectra.meanLeafSpectra(tl, "sample-spectra", colors[i - 1]);
-      }
+      Object.keys(selectedLeaves).map((l: any) => {
+        if (selectedLeaves[l]) {
+          const tl = spectraData.filter((t: any) => {
+            return t.leaf_number == parseInt(l);
+          });
+          spectra.meanLeafSpectra(
+            tl,
+            "sample-spectra",
+            colors[parseInt(l) - 1]
+          );
+        }
+      });
     }
   }, [selectedLeaves, spectraData, reflectance, transmittance]);
 
@@ -111,7 +132,7 @@ export default function LeafSampleSpectra(props: any) {
             sx={{
               display: "block",
               paddingLeft: "0px",
-              margin: "75px 0 0 0",
+              margin: "0",
             }}
           >
             <Grid
@@ -180,45 +201,47 @@ export default function LeafSampleSpectra(props: any) {
                   labelPlacement="end"
                 />
               </FormGroup>
-
+            </Grid>
+            <Grid
+              item
+              xs={12}
+              sx={{
+                alignItems: "center",
+                display: "flex",
+                justifyContent: "center",
+                position: "relative",
+              }}
+            >
               <FormGroup aria-label="position" row sx={{}}>
                 <FormControlLabel
-                  value="top"
                   control={
-                    <Switch
-                      color="primary"
-                      checked={reflectance}
-                      onChange={(event) => setReflectance(event.target.checked)}
+                    <Checkbox
+                      defaultChecked
+                      onChange={handleLeafCheck}
+                      name="1"
                     />
                   }
-                  label="Reflectance"
-                  labelPlacement="end"
+                  label="1"
                 />
                 <FormControlLabel
-                  value="end"
-                  control={
-                    <Switch
-                      color="primary"
-                      checked={transmittance}
-                      onChange={(event) =>
-                        setTransmittance(event.target.checked)
-                      }
-                    />
-                  }
-                  label={t("transmittance")}
-                  labelPlacement="end"
+                  control={<Checkbox onChange={handleLeafCheck} name="2" />}
+                  label="2"
                 />
                 <FormControlLabel
-                  value="end"
-                  control={
-                    <Switch
-                      color="primary"
-                      checked={showRange}
-                      onChange={(event) => setShowRange(event.target.checked)}
-                    />
-                  }
-                  label={t("ranges")}
-                  labelPlacement="end"
+                  control={<Checkbox onChange={handleLeafCheck} name="3" />}
+                  label="3"
+                />
+                <FormControlLabel
+                  control={<Checkbox onChange={handleLeafCheck} name="4" />}
+                  label="4"
+                />
+                <FormControlLabel
+                  control={<Checkbox onChange={handleLeafCheck} name="5" />}
+                  label="5"
+                />
+                <FormControlLabel
+                  control={<Checkbox onChange={handleLeafCheck} name="6" />}
+                  label="6"
                 />
               </FormGroup>
               <Button
