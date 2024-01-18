@@ -71,11 +71,6 @@ export default function LeafSampleSpectra(props: any) {
     )
       .then((result) => {
         setSpectraData(result);
-        if (result.length > 0) {
-          setEmptySpectra(false);
-        } else {
-          setEmptySpectra(true);
-        }
       })
       .catch((error) => {
         console.log(error);
@@ -99,7 +94,8 @@ export default function LeafSampleSpectra(props: any) {
 
   useEffect(() => {
     spectra.clear("sample-spectra");
-    if (spectraData.length > 0) {
+    if (spectraData && spectraData.length > 0) {
+      setEmptySpectra(false);
       let which = reflectance ? "reflectance" : "none";
       which = transmittance ? "transmittance" : which;
       which = reflectance && transmittance ? "both" : which;
@@ -120,6 +116,9 @@ export default function LeafSampleSpectra(props: any) {
           );
         }
       });
+    } else {
+      setEmptySpectra(true);
+      setShowSpectra(true);
     }
   }, [selectedLeaves, spectraData, reflectance, transmittance]);
 
@@ -222,13 +221,6 @@ export default function LeafSampleSpectra(props: any) {
                   label="6"
                 />
               </FormGroup>
-              <Button
-                sx={{ right: "10px", position: "absolute" }}
-                startIcon={<DownloadForOfflineIcon />}
-                onClick={downloadCSV}
-              >
-                {t("download_csv")}
-              </Button>
             </Grid>
             <Grid item xs={6}>
               <div id="spectra-container" className="row">
@@ -246,13 +238,14 @@ export default function LeafSampleSpectra(props: any) {
           </Grid>
         </CustomPaper>
       </Grow>
-      {showSpectra && emptySpectra && (
+      <Grow in={showSpectra && emptySpectra} timeout={1000}>
         <Paper
           sx={{
             background: "white",
             color: theme.palette.primary.dark,
             maxWidth: "30vw",
             padding: "60px",
+            height: "60px",
             border: `2px solid ${theme.palette.secondary.light}`,
             margin: "auto",
           }}
@@ -261,7 +254,7 @@ export default function LeafSampleSpectra(props: any) {
             <Typography variant="h5">{t("no_spectra")}</Typography>
           </Container>
         </Paper>
-      )}
+      </Grow>
     </>
   );
 }

@@ -108,7 +108,7 @@ const SampleModal = (props) => {
           height: "85vh",
           margin: "auto",
         }}
-        spacing={1}
+        spacing={0}
       >
         <Grid item>
           <Tabs
@@ -131,7 +131,14 @@ const SampleModal = (props) => {
               autoWidth
               variant="outlined"
               onChange={(e, value: any) => setSelectedSample(value)}
-              sx={{ padding: "2px" }}
+              MenuProps={{
+                PaperProps: {
+                  sx: {
+                    padding: 0,
+                    background: "white",
+                  },
+                },
+              }}
             >
               {sampleOptions}
             </Select>
