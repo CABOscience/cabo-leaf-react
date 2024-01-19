@@ -8,7 +8,7 @@ import {
   FormGroup,
   Switch,
   Container,
-  Button,
+  Box,
   Checkbox,
   Radio,
   RadioGroup,
@@ -25,6 +25,7 @@ import {
   CustomAutocomplete,
   CustomPaper,
 } from "../../styles/customMUI";
+import { Loader } from "../Loader";
 import "./style.css";
 import { theme } from "../../styles/theme";
 import { t } from "../../helpers/translations";
@@ -37,7 +38,6 @@ export default function LeafSampleSpectra(props: any) {
     searchBarValue,
     whichSpectra,
     speciesList,
-    setIsSearching,
     searchIndex,
   } = props;
   const [transmittance, setTransmittance] = useState(false);
@@ -46,6 +46,7 @@ export default function LeafSampleSpectra(props: any) {
   const [spectraData, setSpectraData] = useState([]);
   const [showRange, setShowRange] = useState(true);
   const [emptySpectra, setEmptySpectra] = useState(false);
+  const [isSearching, setIsSearching] = useState(true);
   const [selectedLeaves, setSelectedLeaves] = useState({
     "1": true,
     "2": false,
@@ -58,6 +59,7 @@ export default function LeafSampleSpectra(props: any) {
 
   useEffect(() => {
     let ignore = false;
+    setIsSearching(true);
     spectra.clear("leafSpectraGraph");
     let ids = selectedSample.split(",");
     ids = ids.map((i) => parseInt(i));
@@ -99,6 +101,7 @@ export default function LeafSampleSpectra(props: any) {
       let which = reflectance ? "reflectance" : "none";
       which = transmittance ? "transmittance" : which;
       which = reflectance && transmittance ? "both" : which;
+      setIsSearching(false);
       spectra.drawBox(which, "sample", "sample-spectra");
       let i = 1;
       //setIsSearching(false);
@@ -123,7 +126,8 @@ export default function LeafSampleSpectra(props: any) {
   }, [selectedLeaves, spectraData, reflectance, transmittance]);
 
   return (
-    <>
+    <Box sx={{ textAlign: "center", width: "100%" }}>
+      {isSearching && <Loader />}
       <Grow in={showSpectra && !emptySpectra} timeout={1000}>
         <CustomPaper
           elevation={0}
@@ -238,7 +242,7 @@ export default function LeafSampleSpectra(props: any) {
           </Grid>
         </CustomPaper>
       </Grow>
-      <Grow in={showSpectra && emptySpectra} timeout={1000}>
+      <Grow in={showSpectra && emptySpectra && !isSearching} timeout={1000}>
         <Paper
           sx={{
             background: "white",
@@ -255,6 +259,6 @@ export default function LeafSampleSpectra(props: any) {
           </Container>
         </Paper>
       </Grow>
-    </>
+    </Box>
   );
 }

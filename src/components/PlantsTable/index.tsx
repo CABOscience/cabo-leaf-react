@@ -6,6 +6,7 @@ import {
   GridValueGetterParams,
   GridToolbarContainer,
   GridToolbarFilterButton,
+  GridRowSelectionModel,
 } from "@mui/x-data-grid";
 import { t } from "../../helpers/translations";
 import {
@@ -15,10 +16,15 @@ import {
 } from "../../styles/customMUI";
 import { theme } from "../../styles/theme";
 import _ from "lodash";
+import { downloadPlantSpectra } from "../../helpers/api";
 
 const PlantsTable = (props) => {
   const [rows, setRows] = useState([]);
   const { plants, setOpenSampleModal, setClickedSample } = props;
+
+  const [selectedRows, setSelectedRows] = React.useState<GridRowSelectionModel>(
+    []
+  );
 
   useEffect(() => {
     if (plants.length !== 0) {
@@ -39,6 +45,10 @@ const PlantsTable = (props) => {
       setRows(rows);
     }
   }, [plants]);
+
+  const downloadSpectra = () => {
+    downloadPlantSpectra(selectedRows);
+  };
 
   const OpenDetailsButton = (params) => {
     const [count, setCount] = React.useState(0);
@@ -116,7 +126,7 @@ const PlantsTable = (props) => {
     return (
       <GridToolbarContainer>
         <GridToolbarFilterButton />
-        <Button variant="outlined" size="small">
+        <Button variant="outlined" size="small" onClick={downloadSpectra}>
           <Typography sx={{ fontSize: "12px" }}>
             {t("download_selected_spectra")}
           </Typography>
@@ -131,55 +141,57 @@ const PlantsTable = (props) => {
   };
 
   return (
-    <>
-      <CustomPaper elevation={3}>
+    <CustomPaper elevation={3}>
+      <Grid
+        container
+        justifyContent="center"
+        sx={{
+          display: "block",
+          paddingLeft: "0px",
+          margin: "75px 0 0 0",
+        }}
+      >
         <Grid
-          container
-          justifyContent="center"
+          item
+          xs={12}
           sx={{
-            display: "block",
-            paddingLeft: "0px",
-            margin: "75px 0 0 0",
+            color: "white",
+            height: "35px",
+            backgroundColor: theme.palette.primary.main,
+            width: "100%",
           }}
         >
-          <Grid
-            item
-            xs={12}
-            sx={{
-              color: "white",
-              height: "35px",
-              backgroundColor: theme.palette.primary.main,
-              width: "100%",
-            }}
+          <Typography
+            sx={{ fontWeight: "bold", height: "35px", lineHeight: 2.5 }}
           >
-            <Typography
-              sx={{ fontWeight: "bold", height: "35px", lineHeight: 2.5 }}
-            >
-              {t("traits")}
-            </Typography>
-          </Grid>
-          <Grid item>
-            <DataGrid
-              rows={rows}
-              columns={columns}
-              initialState={{
-                pagination: {
-                  paginationModel: {
-                    pageSize: 15,
-                  },
-                },
-              }}
-              slots={{
-                toolbar: CustomToolbar,
-              }}
-              pageSizeOptions={[5]}
-              checkboxSelection
-              disableRowSelectionOnClick
-            />{" "}
-          </Grid>
+            {t("traits")}
+          </Typography>
         </Grid>
-      </CustomPaper>
-    </>
+        <Grid item>
+          <DataGrid
+            rows={rows}
+            columns={columns}
+            initialState={{
+              pagination: {
+                paginationModel: {
+                  pageSize: 15,
+                },
+              },
+            }}
+            slots={{
+              toolbar: CustomToolbar,
+            }}
+            onRowSelectionModelChange={(newRowSelectionModel) => {
+              setSelectedRows(newRowSelectionModel);
+            }}
+            rowSelectionModel={selectedRows}
+            pageSizeOptions={[5]}
+            checkboxSelection
+            disableRowSelectionOnClick
+          />{" "}
+        </Grid>
+      </Grid>
+    </CustomPaper>
   );
 };
 

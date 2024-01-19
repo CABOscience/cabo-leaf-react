@@ -196,7 +196,15 @@ export default function LeafSpectra(props: any) {
               </Button>
             </Grid>
             <Grid item xs={6}>
-              <div id="spectra-container" className="row">
+              <div
+                id="spectra-container"
+                className="row"
+                style={{
+                  width: "70vw",
+                  height: "100%",
+                  position: "relative",
+                }}
+              >
                 <div
                   id={spectraGraphId}
                   className="main-spectra-graph"

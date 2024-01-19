@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { Box, Grid } from "@mui/material";
+import { useState, useEffect, useRef } from "react";
+import { Box, Grid, Grow } from "@mui/material";
 import { Loader } from "./components/Loader";
 import SearchBar from "./components/SearchBar";
 import LeafSpectra from "./components/LeafSpectra";
@@ -31,6 +31,7 @@ function App() {
   const [showOverallTraits, setShowOverallTraits] = useState<boolean>(false);
   const [openSampleModal, setOpenSampleModal] = useState(false);
   const [clickedSample, setClickedSample] = useState("");
+  const ref1 = useRef(0);
 
   useEffect(() => {
     let mounted: boolean = true;
@@ -166,29 +167,38 @@ function App() {
             searchIndex,
           }}
         />
-        <TraitsOverall
-          key="traitsOverall"
-          {...{
-            searchSpecies,
-            searchSpectraIDs,
-            showOverallTraits,
-          }}
-        />
-        <MapOverall
-          key="mapOverall"
-          {...{
-            searchSpecies,
-            searchSpectraIDs,
-            showOverallTraits,
-            plants,
-          }}
-        />
-        <PlantsTable
-          key="plantsTable"
-          plants={plants}
-          setClickedSample={setClickedSample}
-          setOpenSampleModal={setOpenSampleModal}
-        ></PlantsTable>
+        <Box
+          sx={{ display: showSpectra && showOverallTraits ? "block" : "none" }}
+        >
+          <TraitsOverall
+            ref={ref1}
+            key="traitsOverall"
+            {...{
+              searchSpecies,
+              searchSpectraIDs,
+              showOverallTraits,
+            }}
+          />
+        </Box>
+        {showSpectra && (
+          <MapOverall
+            key="mapOverall"
+            {...{
+              searchSpecies,
+              searchSpectraIDs,
+              showOverallTraits,
+              plants,
+            }}
+          />
+        )}
+        {showSpectra && (
+          <PlantsTable
+            key="plantsTable"
+            plants={plants}
+            setClickedSample={setClickedSample}
+            setOpenSampleModal={setOpenSampleModal}
+          ></PlantsTable>
+        )}
         <SampleModal
           openSampleModal={openSampleModal}
           setOpenSampleModal={setOpenSampleModal}

@@ -19,13 +19,6 @@ const TraitDensity = (props: any) => {
 
   const traitGraph = `trait-graph-${trait}-${indexCat}`;
 
-  const getAllValuesForOneTrait = async (trait: string) => {
-    try {
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
   useEffect(() => {
     let ignore = false;
     getCABOApi(
@@ -40,7 +33,6 @@ const TraitDensity = (props: any) => {
         density(res);
       }
     });
-    getAllValuesForOneTrait(props.trait);
     return () => (ignore = true);
   }, [trait, traitSelection]);
 

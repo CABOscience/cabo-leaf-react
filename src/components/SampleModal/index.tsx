@@ -49,31 +49,33 @@ const SampleModal = (props) => {
     let ignore = false;
     if (plants && plants.length > 0 && clickedSample) {
       const thisPlant = plants.filter((f) => clickedSample === f.plant_id);
-      var plantPhotos: any = [];
-      if (thisPlant[0].plant_photos !== null) {
-        var pf = thisPlant[0].plant_photos.split(",");
-        pf.map((p) => {
-          plantPhotos.push(
-            "https://data.caboscience.org/photos/plants/" + p + ".jpg"
+      if (thisPlant.length > 0) {
+        var plantPhotos: any = [];
+        if (thisPlant[0].plant_photos !== null) {
+          var pf = thisPlant[0].plant_photos.split(",");
+          pf.map((p) => {
+            plantPhotos.push(
+              "https://data.caboscience.org/photos/plants/" + p + ".jpg"
+            );
+          });
+        }
+        if (thisPlant[0].close_up_photos !== null) {
+          pf = thisPlant[0].close_up_photos.split(",");
+          pf.map((p) => {
+            plantPhotos.push(
+              "https://data.caboscience.org/photos/plants/" + p + ".jpg"
+            );
+          });
+        }
+        setImages(plantPhotos);
+        if (thisPlant[0].bulk_leaf_samples?.length > 0) {
+          setSampleOptions(
+            thisPlant[0].bulk_leaf_samples.map((p) => (
+              <MenuItem value={p.sample_id}>{p.date_sampled}</MenuItem>
+            ))
           );
-        });
-      }
-      if (thisPlant[0].close_up_photos !== null) {
-        pf = thisPlant[0].close_up_photos.split(",");
-        pf.map((p) => {
-          plantPhotos.push(
-            "https://data.caboscience.org/photos/plants/" + p + ".jpg"
-          );
-        });
-      }
-      setImages(plantPhotos);
-      if (thisPlant[0].bulk_leaf_samples?.length > 0) {
-        setSampleOptions(
-          thisPlant[0].bulk_leaf_samples.map((p) => (
-            <MenuItem value={p.sample_id}>{p.date_sampled}</MenuItem>
-          ))
-        );
-        setSelectedSample(thisPlant[0].bulk_leaf_samples[0].sample_id);
+          setSelectedSample(thisPlant[0].bulk_leaf_samples[0].sample_id);
+        }
       }
     }
     return () => {

@@ -158,3 +158,16 @@ export const getAllTraits = async (sample_ids) => {
     "post"
   );
 };
+
+export const downloadPlantSpectra = async (sample_ids) => {
+  getCABOApi(
+    "leaf_spectra/csv/",
+    {
+      ids: sample_ids,
+      type: "raw",
+    },
+    "post"
+  ).then((resp: any) => {
+    processCSVResponse(resp);
+  });
+};
