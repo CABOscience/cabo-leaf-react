@@ -40,3 +40,8 @@
 .read-the-docs {
   color: #888;
 }
+
+.MuiDataGrid-panel .MuiPaper-root {
+  /*Filter on data table*/
+  background: white;
+}

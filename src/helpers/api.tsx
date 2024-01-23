@@ -26,7 +26,7 @@ export const getCABOApi = async (
     } else {
       result = await axios.post(
         `${base_url}${endpoint}`,
-        { ...paramObj, count: 10000 },
+        { ...paramObj },
         {
           headers: headers,
         }
@@ -157,6 +157,26 @@ export const getAllTraits = async (sample_ids) => {
     },
     "post"
   );
+};
+
+export const downloadSelectedPlantTraitsCSV = async (sample_ids) => {
+  let ids = [];
+  if (sample_ids.length == 1) {
+    ids = sample_ids.split(",");
+  } else {
+    ids = sample_ids;
+  }
+  return await getCABOApi(
+    "traits/csv/",
+    {
+      ids: ids,
+      type: "raw",
+    },
+    "post"
+  ).then((resp) => {
+    const d = Date.now();
+    processCSVResponse("cabo_selected_plant_traits_" + d + ".csv");
+  });
 };
 
 export const downloadPlantSpectra = async (sample_ids) => {

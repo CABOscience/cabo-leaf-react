@@ -16,7 +16,10 @@ import {
 } from "../../styles/customMUI";
 import { theme } from "../../styles/theme";
 import _ from "lodash";
-import { downloadPlantSpectra } from "../../helpers/api";
+import {
+  downloadPlantSpectra,
+  downloadSelectedPlantTraitsCSV,
+} from "../../helpers/api";
 
 const PlantsTable = (props) => {
   const [rows, setRows] = useState([]);
@@ -48,6 +51,10 @@ const PlantsTable = (props) => {
 
   const downloadSpectra = () => {
     downloadPlantSpectra(selectedRows);
+  };
+
+  const downloadTraits = () => {
+    downloadSelectedPlantTraitsCSV(selectedRows);
   };
 
   const OpenDetailsButton = (params) => {
@@ -97,22 +104,26 @@ const PlantsTable = (props) => {
       renderCell: (params: any) => (
         <>
           <OpenDetailsButton params={params} />
-          <Button
-            variant="contained"
-            size="small"
-            style={{ marginLeft: 16 }}
-            tabIndex={params.hasFocus ? 0 : -1}
-          >
-            {t("download_spectra")}
-          </Button>
-          <Button
-            variant="contained"
-            size="small"
-            style={{ marginLeft: 16 }}
-            tabIndex={params.hasFocus ? 0 : -1}
-          >
-            {t("download_traits")}
-          </Button>
+          {false && (
+            <>
+              <Button
+                variant="contained"
+                size="small"
+                style={{ marginLeft: 16 }}
+                tabIndex={params.hasFocus ? 0 : -1}
+              >
+                {t("download_spectra")}
+              </Button>
+              <Button
+                variant="contained"
+                size="small"
+                style={{ marginLeft: 16 }}
+                tabIndex={params.hasFocus ? 0 : -1}
+              >
+                {t("download_traits")}
+              </Button>
+            </>
+          )}
         </>
       ),
     },
@@ -131,7 +142,7 @@ const PlantsTable = (props) => {
             {t("download_selected_spectra")}
           </Typography>
         </Button>
-        <Button variant="outlined" size="small">
+        <Button variant="outlined" size="small" onClick={downloadTraits}>
           <Typography sx={{ fontSize: "12px" }}>
             {t("download_selected_traits")}
           </Typography>
