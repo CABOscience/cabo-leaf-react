@@ -4,13 +4,17 @@ import TraitDensity from "../TraitDensity";
 import { t } from "../../helpers/translations";
 
 const TraitsOverallTab = (props) => {
-  const { traitsThisCat, traitSelection, indexCat, thisCat } = props;
+  const { traitsThisCat, traitSelection, indexCat, thisCat, type } = props;
   const [comp, setComp] = useState(<></>);
   useEffect(() => {
     setComp(
-      <Grid container className="app-body row traits">
+      <Grid
+        container
+        className="app-body row traits"
+        sx={{ overflowY: "scroll" }}
+      >
         {Object.entries(traitsThisCat).map(([name, thisTrait], index) => (
-          <Grid item xs={6}>
+          <Grid item xs={type === "overall" ? 6 : 12}>
             <Grid container>
               <Grid item>
                 <Typography>
@@ -19,14 +23,14 @@ const TraitsOverallTab = (props) => {
               </Grid>
               <Grid>
                 <TraitDensity
-                  key={`overall-"${name}`}
+                  key={`${type}-${name}`}
                   traitVal={thisTrait}
                   indexCat={indexCat}
                   traitType={thisCat}
                   traitSelection={traitSelection}
                   trait={name}
                   searchSpecies={props.searchSpecies}
-                  type="overall"
+                  type={type}
                 />
               </Grid>
             </Grid>

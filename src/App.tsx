@@ -177,6 +177,7 @@ function App() {
               searchSpecies,
               searchSpectraIDs,
               showOverallTraits,
+              type: "overall",
             }}
           />
         </Box>
@@ -204,6 +205,7 @@ function App() {
           setOpenSampleModal={setOpenSampleModal}
           clickedSample={clickedSample}
           plants={plants}
+          searchSpecies={searchSpecies}
         ></SampleModal>
       </Box>
     </ThemeProvider>

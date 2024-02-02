@@ -24,12 +24,19 @@ import {
 } from "../../styles/customMUI";
 import { theme } from "../../styles/theme";
 import LeafSampleSpectra from "./leafSampleSpectra";
+import TraitsOverall from "../TraitsOverall";
 import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import _ from "lodash";
 
 const SampleModal = (props) => {
-  const { clickedSample, openSampleModal, setOpenSampleModal, plants } = props;
+  const {
+    clickedSample,
+    openSampleModal,
+    setOpenSampleModal,
+    plants,
+    searchSpecies,
+  } = props;
   const [selectedSample, setSelectedSample] = useState("");
   const [activeStep, setActiveStep] = useState(0);
   const [sampleOptions, setSampleOptions] = useState(<></>);
@@ -122,76 +129,93 @@ const SampleModal = (props) => {
             <Tab key={2} label={t("traits")}></Tab>
           </Tabs>
         </Grid>
-        <Grid item xs={12} sx={{ textAlign: "center" }}>
-          <FormControl sx={{ m: 1, minWidth: 80, marginTop: 1 }} size="small">
-            <InputLabel id="leaf-sample-select">{t("sample_date")}</InputLabel>
-            <Select
-              labelId="leaf-sample-select"
-              id="leaf-sample-select-id"
-              value={selectedSample}
-              label={t("sample_date")}
-              autoWidth
-              variant="outlined"
-              onChange={(e, value: any) => setSelectedSample(value)}
-              MenuProps={{
-                PaperProps: {
-                  sx: {
-                    padding: 0,
-                    background: "white",
-                  },
-                },
-              }}
-            >
-              {sampleOptions}
-            </Select>
-          </FormControl>
-        </Grid>
-        {activeTab === 0 && (
-          <Grid item xs={12} sx={{ textAlign: "center" }}>
-            <Box sx={{ maxWidth: 400, flexGrow: 1, margin: "auto" }}>
-              <Box
-                component="img"
-                sx={{
-                  maxHeight: 900,
-                  maxWidth: 400,
-                  margin: "auto",
-                  position: "relative",
-                  height: "60vh",
-                }}
-                alt="Plant photo"
-                src={images[activeStep]}
-              />
-              <MobileStepper
-                steps={maxSteps}
-                position="static"
-                activeStep={activeStep}
-                nextButton={
-                  <Button
-                    size="small"
-                    onClick={handleNext}
-                    disabled={activeStep === maxSteps - 1}
-                  >
-                    Next
-                    <KeyboardArrowRight />
-                  </Button>
-                }
-                backButton={
-                  <Button
-                    size="small"
-                    onClick={handleBack}
-                    disabled={activeStep === 0}
-                  >
-                    <KeyboardArrowLeft />
-                    Back
-                  </Button>
-                }
-              />
-            </Box>
+        <Grid item xs={12} sx={{ textAlign: "center", height: "100%" }}>
+          <Grid container sx={{ textAlign: "center", height: "60px" }}>
+            <Grid item xs={12}>
+              <FormControl
+                sx={{ m: 1, minWidth: 80, marginTop: 1 }}
+                size="small"
+              >
+                <InputLabel id="leaf-sample-select">
+                  {t("sample_date")}
+                </InputLabel>
+                <Select
+                  labelId="leaf-sample-select"
+                  id="leaf-sample-select-id"
+                  value={selectedSample}
+                  label={t("sample_date")}
+                  autoWidth
+                  variant="outlined"
+                  onChange={(e, value: any) => setSelectedSample(value)}
+                  MenuProps={{
+                    PaperProps: {
+                      sx: {
+                        padding: 0,
+                        background: "white",
+                      },
+                    },
+                  }}
+                >
+                  {sampleOptions}
+                </Select>
+              </FormControl>
+            </Grid>
           </Grid>
-        )}
-        {activeTab === 1 && (
-          <LeafSampleSpectra selectedSample={selectedSample} />
-        )}
+          {activeTab === 0 && (
+            <Grid container xs={12} sx={{ textAlign: "center" }}>
+              <Box sx={{ maxWidth: 400, flexGrow: 1, margin: "auto" }}>
+                <Box
+                  component="img"
+                  sx={{
+                    maxHeight: 900,
+                    maxWidth: 400,
+                    margin: "auto",
+                    position: "relative",
+                    height: "60vh",
+                  }}
+                  alt="Plant photo"
+                  src={images[activeStep]}
+                />
+                <MobileStepper
+                  steps={maxSteps}
+                  position="static"
+                  activeStep={activeStep}
+                  nextButton={
+                    <Button
+                      size="small"
+                      onClick={handleNext}
+                      disabled={activeStep === maxSteps - 1}
+                    >
+                      Next
+                      <KeyboardArrowRight />
+                    </Button>
+                  }
+                  backButton={
+                    <Button
+                      size="small"
+                      onClick={handleBack}
+                      disabled={activeStep === 0}
+                    >
+                      <KeyboardArrowLeft />
+                      Back
+                    </Button>
+                  }
+                />
+              </Box>
+            </Grid>
+          )}
+          {activeTab === 1 && (
+            <LeafSampleSpectra selectedSample={selectedSample} />
+          )}
+          {activeTab === 2 && (
+            <TraitsOverall
+              key="traitsSample"
+              searchSpectraIDs={[{ sample_id: selectedSample }]}
+              searchSpecies={searchSpecies}
+              type="sample"
+            />
+          )}
+        </Grid>
       </Grid>
     </Modal>
   );

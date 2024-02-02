@@ -17,7 +17,7 @@ const TraitDensity = (props: any) => {
   } = props;
   const densityRef = useRef(null);
 
-  const traitGraph = `trait-graph-${trait}-${indexCat}`;
+  const traitGraph = `trait-${type}-graph-${trait}-${indexCat}`;
 
   useEffect(() => {
     let ignore = false;

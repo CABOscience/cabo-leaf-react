@@ -21,16 +21,17 @@ import { theme } from "../../styles/theme";
 import _ from "lodash";
 
 const TraitsOverall = (props) => {
-  const { searchSpectraIDs, searchSpecies, showOverallTraits } = props;
-  const [activeTrait, setActiveTrait] = useState<number>(0);
-  const [traitSelection, setTraitSelection] = useState<number>(0);
-  const [traitsCat, setTraitsCat] = useState({
+  const traitsCatO = {
     leaf_area_and_water_samples: {},
     icp_leaf_element_concentrations: {},
     c_n_leaf_concentrations: {},
     carbon_fractions_bags: {},
     pigments_extracts: {},
-  });
+  };
+  const { searchSpectraIDs, searchSpecies, type } = props;
+  const [activeTrait, setActiveTrait] = useState<number>(0);
+  const [traitSelection, setTraitSelection] = useState<number>(0);
+  const [traitsCat, setTraitsCat] = useState(traitsCatO);
 
   useEffect(() => {
     let ignore = false;
@@ -73,14 +74,15 @@ const TraitsOverall = (props) => {
   }, [searchSpectraIDs]);
 
   useEffect(() => {
+    let tC = { ...traitsCatO };
     _.mapKeys(traitSelection, (valueType, keyType) => {
       _.mapKeys(valueType, (value, key) => {
         if (!isNaN(value)) {
-          traitsCat[traitsTable[key]][key] = true;
+          tC[traitsTable[key]][key] = true;
         }
       });
     });
-    setTraitsCat(traitsCat);
+    setTraitsCat(tC);
   }, [traitSelection]);
 
   const hasTraitsCat = (cat: string): boolean => {
@@ -104,7 +106,7 @@ const TraitsOverall = (props) => {
         sx={{
           display: "block",
           paddingLeft: "0px",
-          margin: "75px 0 0 0",
+          margin: type === "overall" ? "75px 0 0 0" : "2px 5px 5px 5px",
         }}
       >
         <Grid
@@ -123,7 +125,7 @@ const TraitsOverall = (props) => {
             {t("traits")}
           </Typography>
         </Grid>
-        <Grid item>
+        <Grid item sx={{ height: "90%", overflowY: "scroll" }}>
           <Grid container>
             <Grid item xs={3}>
               <Tabs
@@ -154,15 +156,19 @@ const TraitsOverall = (props) => {
                         xs={12}
                         key={indexCat}
                         hidden={activeTrait !== indexCat}
+                        sx={{ overflowY: "scroll" }}
                       >
-                        <CardContent>
+                        <CardContent
+                          sx={{ overflowY: "scroll", height: "95%" }}
+                        >
                           <TraitsOverallTab
-                            key={indexCat}
+                            key={`${type}-${indexCat}`}
                             traitCat={thisCat}
                             traitsThisCat={traitsCat[thisCat]}
                             indexCat={indexCat}
                             traitSelection={traitSelection}
                             searchSpecies={searchSpecies}
+                            type={type}
                           />
                         </CardContent>
                       </Grid>
