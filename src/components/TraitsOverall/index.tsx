@@ -109,22 +109,24 @@ const TraitsOverall = (props) => {
           margin: type === "overall" ? "75px 0 0 0" : "2px 5px 5px 5px",
         }}
       >
-        <Grid
-          item
-          xs={12}
-          sx={{
-            color: "white",
-            height: "35px",
-            backgroundColor: theme.palette.primary.main,
-            width: "100%",
-          }}
-        >
-          <Typography
-            sx={{ fontWeight: "bold", height: "35px", lineHeight: 2.5 }}
+        {type === "overall" && (
+          <Grid
+            item
+            xs={12}
+            sx={{
+              color: "white",
+              height: "35px",
+              backgroundColor: theme.palette.primary.main,
+              width: "100%",
+            }}
           >
-            {t("traits")}
-          </Typography>
-        </Grid>
+            <Typography
+              sx={{ fontWeight: "bold", height: "35px", lineHeight: 2.5 }}
+            >
+              {t("traits")}
+            </Typography>
+          </Grid>
+        )}
         <Grid item sx={{ height: "90%", overflowY: "scroll" }}>
           <Grid container>
             <Grid item xs={3}>
@@ -158,9 +160,7 @@ const TraitsOverall = (props) => {
                         hidden={activeTrait !== indexCat}
                         sx={{ overflowY: "scroll" }}
                       >
-                        <CardContent
-                          sx={{ overflowY: "scroll", height: "95%" }}
-                        >
+                        <CardContent sx={{ overflowY: "scroll" }}>
                           <TraitsOverallTab
                             key={`${type}-${indexCat}`}
                             traitCat={thisCat}

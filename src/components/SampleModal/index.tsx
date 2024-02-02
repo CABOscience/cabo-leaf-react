@@ -114,7 +114,7 @@ const SampleModal = (props) => {
           background: "white",
           maxWidth: "800px",
           width: "60vw",
-          height: "85vh",
+          height: "95%",
           margin: "auto",
         }}
         spacing={0}
