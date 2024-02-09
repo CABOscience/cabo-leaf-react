@@ -192,6 +192,8 @@ function App() {
               searchSpectraIDs,
               showOverallTraits,
               plants,
+              setClickedSample,
+              setOpenSampleModal,
             }}
           />
         )}

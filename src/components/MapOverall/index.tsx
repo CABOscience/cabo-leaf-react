@@ -19,7 +19,7 @@ import "/node_modules/leaflet/dist/leaflet.css";
 import MarkerClusterGroup from "react-leaflet-cluster";
 
 const MapOverall = (props) => {
-  const { plants } = props;
+  const { plants, setClickedSample, setOpenSampleModal } = props;
   const [markers, setMarkers] = useState([]);
   const [bounds, setBounds] = useState([]);
 
@@ -73,12 +73,20 @@ const MapOverall = (props) => {
         <MarkerClusterGroup chunkedLoading>
           {markers.map((geo: any, index) => (
             <Marker
-              key={index}
+              key={geo.plant_id}
+              eventHandlers={{
+                click: (e, val) => {
+                  setClickedSample(e.target.options.children);
+                  setOpenSampleModal(true);
+                },
+              }}
               position={[
                 geo.geometry.coordinates[0],
                 geo.geometry.coordinates[1],
               ]}
-            ></Marker>
+            >
+              {geo.plant_id}
+            </Marker>
           ))}
         </MarkerClusterGroup>
         <TileLayer
