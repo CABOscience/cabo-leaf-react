@@ -13,6 +13,10 @@ import {
   Modal,
   MobileStepper,
   Button,
+  Table,
+  TableCell,
+  TableContainer,
+  TableRow,
 } from "@mui/material";
 import { getAllTraits } from "../../helpers/api";
 import { traitsTable } from "../../helpers/constants";
@@ -42,6 +46,7 @@ const SampleModal = (props) => {
   const [sampleOptions, setSampleOptions] = useState(<></>);
   const [images, setImages] = useState([]);
   const [activeTab, setActiveTab] = useState(0);
+  const [plantInfo, setPlantInfo]: any = useState({});
   const maxSteps = images.length;
 
   const handleNext = () => {
@@ -74,6 +79,12 @@ const SampleModal = (props) => {
             );
           });
         }
+        setPlantInfo({
+          dateFirstObserved: thisPlant[0].date_first_observed,
+          siteId: thisPlant[0].site_id,
+          plantId: thisPlant[0].plant_id,
+          numberOfSample: thisPlant[0].bulk_leaf_samples.length,
+        });
         setImages(plantPhotos);
         if (thisPlant[0].bulk_leaf_samples?.length > 0) {
           setSampleOptions(
@@ -116,6 +127,7 @@ const SampleModal = (props) => {
           width: "60vw",
           height: "95%",
           margin: "auto",
+          overflowY: "scroll",
         }}
         spacing={0}
       >
@@ -125,8 +137,9 @@ const SampleModal = (props) => {
             onChange={(_, newValue) => setActiveTab(newValue)}
           >
             <Tab key={0} label={t("info_sheet")}></Tab>
-            <Tab key={1} label={t("spectra")}></Tab>
-            <Tab key={2} label={t("traits")}></Tab>
+            <Tab key={1} label="Photos"></Tab>
+            <Tab key={2} label={t("spectra")}></Tab>
+            <Tab key={3} label={t("traits")}></Tab>
           </Tabs>
         </Grid>
         <Grid item xs={12} sx={{ textAlign: "center", height: "100%" }}>
@@ -162,6 +175,42 @@ const SampleModal = (props) => {
             </Grid>
           </Grid>
           {activeTab === 0 && (
+            <Grid container xs={12} sx={{ justifyContent: "center" }}>
+              <Grid item>
+                {Object.keys(plantInfo).length > 0 && (
+                  <TableContainer sx={{ margin: "auto" }}>
+                    <Table>
+                      <TableRow>
+                        <TableCell sx={{ fontWeight: "bold" }}>
+                          {t("site_id")}
+                        </TableCell>
+                        <TableCell>{plantInfo.siteId}</TableCell>
+                      </TableRow>
+                      <TableRow>
+                        <TableCell sx={{ fontWeight: "bold" }}>
+                          {t("plant_id")}
+                        </TableCell>
+                        <TableCell>{plantInfo.plantId}</TableCell>
+                      </TableRow>
+                      <TableRow>
+                        <TableCell sx={{ fontWeight: "bold" }}>
+                          {t("first_observed")}
+                        </TableCell>
+                        <TableCell>{plantInfo.dateFirstObserved}</TableCell>
+                      </TableRow>
+                      <TableRow>
+                        <TableCell sx={{ fontWeight: "bold" }}>
+                          {t("number_of_samples")}
+                        </TableCell>
+                        <TableCell>{plantInfo.numberOfSample}</TableCell>
+                      </TableRow>
+                    </Table>
+                  </TableContainer>
+                )}
+              </Grid>
+            </Grid>
+          )}
+          {activeTab === 1 && (
             <Grid container xs={12} sx={{ textAlign: "center" }}>
               <Box sx={{ maxWidth: 400, flexGrow: 1, margin: "auto" }}>
                 <Box
@@ -204,10 +253,10 @@ const SampleModal = (props) => {
               </Box>
             </Grid>
           )}
-          {activeTab === 1 && (
+          {activeTab === 2 && (
             <LeafSampleSpectra selectedSample={selectedSample} />
           )}
-          {activeTab === 2 && (
+          {activeTab === 3 && (
             <TraitsOverall
               key="traitsSample"
               searchSpectraIDs={[{ sample_id: selectedSample }]}

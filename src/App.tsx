@@ -7,6 +7,7 @@ import TraitsOverall from "./components/TraitsOverall";
 import MapOverall from "./components/MapOverall";
 import PlantsTable from "./components/PlantsTable";
 import SampleModal from "./components/SampleModal";
+import { CustomPaper } from "./styles/customMUI";
 import { searchSpectra } from "./helpers/api";
 import theme from "./styles/theme";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
@@ -135,7 +136,7 @@ function App() {
           <Grid item xs={8} lg={6}>
             <img
               alt="CABO logo"
-              src="CABO_color.png"
+              src="/leaf/react/CABO_color.png"
               className="main-logo"
               style={{ width: "100%", maxWidth: "500px", position: "relative" }}
             />
@@ -170,16 +171,18 @@ function App() {
         <Box
           sx={{ display: showSpectra && showOverallTraits ? "block" : "none" }}
         >
-          <TraitsOverall
-            ref={ref1}
-            key="traitsOverall"
-            {...{
-              searchSpecies,
-              searchSpectraIDs,
-              showOverallTraits,
-              type: "overall",
-            }}
-          />
+          <CustomPaper elevation={3}>
+            <TraitsOverall
+              ref={ref1}
+              key="traitsOverall"
+              {...{
+                searchSpecies,
+                searchSpectraIDs,
+                showOverallTraits,
+                type: "overall",
+              }}
+            />
+          </CustomPaper>
         </Box>
         {showSpectra && (
           <MapOverall

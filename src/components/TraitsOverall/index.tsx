@@ -99,89 +99,87 @@ const TraitsOverall = (props) => {
   };
 
   return (
-    <CustomPaper elevation={3}>
-      <Grid
-        container
-        justifyContent="center"
-        sx={{
-          display: "block",
-          paddingLeft: "0px",
-          margin: type === "overall" ? "75px 0 0 0" : "2px 5px 5px 5px",
-        }}
-      >
-        {type === "overall" && (
-          <Grid
-            item
-            xs={12}
-            sx={{
-              color: "white",
-              height: "35px",
-              backgroundColor: theme.palette.primary.main,
-              width: "100%",
-            }}
+    <Grid
+      container
+      justifyContent="center"
+      sx={{
+        display: "block",
+        paddingLeft: "0px",
+        margin: type === "overall" ? "75px 0 0 0" : "2px 5px 5px 5px",
+      }}
+    >
+      {type === "overall" && (
+        <Grid
+          item
+          xs={12}
+          sx={{
+            color: "white",
+            height: "35px",
+            backgroundColor: theme.palette.primary.main,
+            width: "100%",
+          }}
+        >
+          <Typography
+            sx={{ fontWeight: "bold", height: "35px", lineHeight: 2.5 }}
           >
-            <Typography
-              sx={{ fontWeight: "bold", height: "35px", lineHeight: 2.5 }}
+            {t("traits")}
+          </Typography>
+        </Grid>
+      )}
+      <Grid item sx={{ height: "90%", overflowY: "scroll" }}>
+        <Grid container>
+          <Grid item xs={3}>
+            <Tabs
+              value={activeTrait}
+              onChange={(_, newValue) => setActiveTrait(newValue)}
+              orientation="vertical"
+              variant="scrollable"
+              textColor="primary"
+              indicatorColor="primary"
+              sx={{ width: "100%" }}
             >
-              {t("traits")}
-            </Typography>
+              {Object.keys(traitsCat).map((thisCat, indexCat) => (
+                <Tab
+                  key={indexCat}
+                  label={t(thisCat)}
+                  disabled={hasTraitsCat(thisCat)}
+                />
+              ))}
+            </Tabs>
           </Grid>
-        )}
-        <Grid item sx={{ height: "90%", overflowY: "scroll" }}>
-          <Grid container>
-            <Grid item xs={3}>
-              <Tabs
-                value={activeTrait}
-                onChange={(_, newValue) => setActiveTrait(newValue)}
-                orientation="vertical"
-                variant="scrollable"
-                textColor="primary"
-                indicatorColor="primary"
-                sx={{ width: "100%" }}
-              >
-                {Object.keys(traitsCat).map((thisCat, indexCat) => (
-                  <Tab
-                    key={indexCat}
-                    label={t(thisCat)}
-                    disabled={hasTraitsCat(thisCat)}
-                  />
-                ))}
-              </Tabs>
-            </Grid>
-            <Grid item xs={9}>
-              <Grid container>
-                {Object.keys(traitsCat).map((thisCat, indexCat) => {
-                  if (Object.keys(traitsCat[thisCat]).length > 0) {
-                    return (
-                      <Grid
-                        item
-                        xs={12}
-                        key={indexCat}
-                        hidden={activeTrait !== indexCat}
-                        sx={{ overflowY: "scroll" }}
-                      >
-                        <CardContent sx={{ overflowY: "scroll" }}>
-                          <TraitsOverallTab
-                            key={`${type}-${indexCat}`}
-                            traitCat={thisCat}
-                            traitsThisCat={traitsCat[thisCat]}
-                            indexCat={indexCat}
-                            traitSelection={traitSelection}
-                            searchSpecies={searchSpecies}
-                            type={type}
-                          />
-                        </CardContent>
-                      </Grid>
-                    );
-                  }
-                  return <></>;
-                })}
-              </Grid>
+          <Grid item xs={9} sx={{ overflowY: "scroll" }} className="traits-tab">
+            <Grid container>
+              {Object.keys(traitsCat).map((thisCat, indexCat) => {
+                if (Object.keys(traitsCat[thisCat]).length > 0) {
+                  return (
+                    <Grid
+                      item
+                      xs={12}
+                      key={indexCat}
+                      hidden={activeTrait !== indexCat}
+                      sx={{ overflowY: "scroll" }}
+                    >
+                      <CardContent sx={{ overflowY: "scroll" }}>
+                        <TraitsOverallTab
+                          key={`${type}-${indexCat}`}
+                          traitCat={thisCat}
+                          traitsThisCat={traitsCat[thisCat]}
+                          indexCat={indexCat}
+                          traitSelection={traitSelection}
+                          searchSpecies={searchSpecies}
+                          type={type}
+                        />
+                      </CardContent>
+                    </Grid>
+                  );
+                }
+                return <></>;
+              })}
             </Grid>
           </Grid>
         </Grid>
       </Grid>
-    </CustomPaper>
+    </Grid>
   );
 };
 
