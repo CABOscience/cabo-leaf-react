@@ -102,6 +102,7 @@ export const messages: any = {
     species_list: "Species list",
     no_spectra: "No spectra available",
     sample_date: "Sample date",
+    password: "Password",
   },
   fr: {
     results: "Résultats",
@@ -198,5 +199,6 @@ export const messages: any = {
     species_list: "Liste d'espèces",
     no_spectra: "Aucun spectre n'est disponible",
     sample_date: "Date de l'échantillon",
+    password: "Mot de passe",
   },
 };

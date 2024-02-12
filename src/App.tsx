@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Box, Grid, Grow } from "@mui/material";
+import { Box, Grid, Grow, TextField } from "@mui/material";
 import { Loader } from "./components/Loader";
 import SearchBar from "./components/SearchBar";
 import LeafSpectra from "./components/LeafSpectra";
@@ -12,8 +12,10 @@ import { searchSpectra } from "./helpers/api";
 import theme from "./styles/theme";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import "./App.css";
-import { getCABOApiMulti } from "./helpers/api";
+import { getCABOApiMulti, updatePassword } from "./helpers/api";
 import { t, lang } from "./helpers/translations";
+import { InputOutlined } from "@mui/icons-material";
+import bcrypt from "bcryptjs";
 
 function App() {
   const [isSearching, setIsSearching] = useState(false);
@@ -27,7 +29,8 @@ function App() {
   const [showSpectra, setShowSpectra] = useState(false);
   const [spFreq, setSpFreq] = useState({});
   const [searchIndex, setSearchIndex] = useState(0);
-  const [isAdmin, setIsAdmin] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [adminClicked, setAdminClicked] = useState(false);
   const [plants, setPlants] = useState([]);
   const [showOverallTraits, setShowOverallTraits] = useState<boolean>(false);
   const [openSampleModal, setOpenSampleModal] = useState(false);
@@ -125,6 +128,17 @@ function App() {
     };
   }, [searchSpectraIDs]);
 
+  const changePassword = (pass: string) => {
+    bcrypt
+      .compare(pass, import.meta.env.VITE_APP_CABO_PASSWORD)
+      .then((res: any) => {
+        if (res) {
+          setIsAdmin(true);
+          setAdminClicked(false);
+        }
+      });
+  };
+
   return (
     <ThemeProvider theme={theme}>
       <Box
@@ -132,6 +146,32 @@ function App() {
           marginBottom: "30vh",
         }}
       >
+        <Box
+          sx={{
+            position: "absolute",
+            top: "10px",
+            left: "10px",
+            cursor: "pointer",
+          }}
+        >
+          {(!adminClicked || isAdmin) && (
+            <Box
+              sx={{ color: isAdmin ? "green" : "black" }}
+              onClick={() => setAdminClicked(true)}
+            >
+              admin
+            </Box>
+          )}
+          {adminClicked && !isAdmin && (
+            <TextField
+              size="small"
+              onChange={(e) => {
+                changePassword(e.target.value);
+              }}
+              placeholder={t("password")}
+            ></TextField>
+          )}
+        </Box>
         <Grid container sx={{ width: "100%" }} justifyContent="center">
           <Grid item xs={8} lg={6}>
             <img

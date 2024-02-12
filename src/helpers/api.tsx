@@ -1,4 +1,5 @@
 import axios from "axios";
+import bcrypt from "bcryptjs";
 
 /**
  * function used to make any custom request
