@@ -160,7 +160,10 @@ export const getAllTraits = async (sample_ids) => {
   );
 };
 
-export const downloadSelectedPlantTraitsCSV = async (sample_ids) => {
+export const downloadSelectedPlantTraitsCSV = async (
+  sample_ids,
+  loadingSetter
+) => {
   let ids = [];
   if (sample_ids.length == 1) {
     ids = sample_ids.split(",");
@@ -177,10 +180,11 @@ export const downloadSelectedPlantTraitsCSV = async (sample_ids) => {
   ).then((resp) => {
     const d = Date.now();
     processCSVResponse("cabo_selected_plant_traits_" + d + ".csv");
+    loadingSetter(false);
   });
 };
 
-export const downloadPlantSpectra = async (sample_ids) => {
+export const downloadPlantSpectra = async (sample_ids, loadingSetter) => {
   getCABOApi(
     "leaf_spectra/csv/",
     {
@@ -190,5 +194,6 @@ export const downloadPlantSpectra = async (sample_ids) => {
     "post"
   ).then((resp: any) => {
     processCSVResponse(resp);
+    loadingSetter(false);
   });
 };

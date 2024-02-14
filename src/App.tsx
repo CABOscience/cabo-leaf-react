@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Box, Grid, Grow, TextField } from "@mui/material";
+import { Box, Grid, Grow, TextField, Alert } from "@mui/material";
 import { Loader } from "./components/Loader";
 import SearchBar from "./components/SearchBar";
 import LeafSpectra from "./components/LeafSpectra";
@@ -12,9 +12,9 @@ import { searchSpectra } from "./helpers/api";
 import theme from "./styles/theme";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import "./App.css";
-import { getCABOApiMulti, updatePassword } from "./helpers/api";
+import { getCABOApiMulti } from "./helpers/api";
 import { t, lang } from "./helpers/translations";
-import { InputOutlined } from "@mui/icons-material";
+import { InputOutlined, Check } from "@mui/icons-material";
 import bcrypt from "bcryptjs";
 
 function App() {
@@ -35,6 +35,7 @@ function App() {
   const [showOverallTraits, setShowOverallTraits] = useState<boolean>(false);
   const [openSampleModal, setOpenSampleModal] = useState(false);
   const [clickedSample, setClickedSample] = useState("");
+  const [traitSelection, setTraitSelection] = useState<number>(0);
   const ref1 = useRef(0);
 
   useEffect(() => {
@@ -221,10 +222,20 @@ function App() {
                 showOverallTraits,
                 type: "overall",
               }}
+              traitSelection={traitSelection}
+              setTraitSelection={setTraitSelection}
             />
           </CustomPaper>
         </Box>
         {showSpectra && (
+          <Alert
+            severity="success"
+            sx={{ marginTop: "30px", fontSize: "large" }}
+          >
+            {`${accessibleSamples().length} plants can be explored`}
+          </Alert>
+        )}
+        {showSpectra && accessibleSamples().length > 0 && (
           <MapOverall
             key="mapOverall"
             {...{
@@ -237,12 +248,13 @@ function App() {
             }}
           />
         )}
-        {showSpectra && (
+        {showSpectra && accessibleSamples().length > 0 && (
           <PlantsTable
             key="plantsTable"
             plants={plants}
             setClickedSample={setClickedSample}
             setOpenSampleModal={setOpenSampleModal}
+            traitSelection={traitSelection}
           ></PlantsTable>
         )}
         <SampleModal
@@ -251,6 +263,8 @@ function App() {
           clickedSample={clickedSample}
           plants={plants}
           searchSpecies={searchSpecies}
+          traitSelection={traitSelection}
+          setTraitSelection={setTraitSelection}
         ></SampleModal>
       </Box>
     </ThemeProvider>

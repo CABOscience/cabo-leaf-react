@@ -28,9 +28,14 @@ const TraitsOverall = (props) => {
     carbon_fractions_bags: {},
     pigments_extracts: {},
   };
-  const { searchSpectraIDs, searchSpecies, type } = props;
+  const {
+    searchSpectraIDs,
+    searchSpecies,
+    type,
+    traitSelection,
+    setTraitSelection,
+  } = props;
   const [activeTrait, setActiveTrait] = useState<number>(0);
-  const [traitSelection, setTraitSelection] = useState<number>(0);
   const [traitsCat, setTraitsCat] = useState(traitsCatO);
 
   useEffect(() => {
@@ -78,7 +83,7 @@ const TraitsOverall = (props) => {
     _.mapKeys(traitSelection, (valueType, keyType) => {
       _.mapKeys(valueType, (value, key) => {
         if (!isNaN(value)) {
-          tC[traitsTable[key]][key] = true;
+          tC[traitsTable[key]][key] = value;
         }
       });
     });

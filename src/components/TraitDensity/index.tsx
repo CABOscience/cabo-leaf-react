@@ -33,7 +33,9 @@ const TraitDensity = (props: any) => {
         density(res);
       }
     });
-    return () => (ignore = true);
+    return () => {
+      ignore = true;
+    };
   }, [trait, traitSelection]);
 
   const density = (data: any) => {
@@ -47,7 +49,7 @@ const TraitDensity = (props: any) => {
     });
     var margin = { top: 15, right: 30, bottom: 30, left: 50 },
       width = 450 - margin.left - margin.right;
-    if (traitSelection !== undefined) {
+    if (type === "overall") {
       var height = 120 - margin.top - margin.bottom;
       var plot_height = height - 40;
     } else {
@@ -176,7 +178,11 @@ const TraitDensity = (props: any) => {
     <Box
       id={traitGraph}
       ref={densityRef}
-      sx={{ width: "100%", height: "150px", display: "block" }}
+      sx={{
+        width: "100%",
+        height: type === "overall" ? "150px" : "100px",
+        display: "block",
+      }}
     ></Box>
   );
 };

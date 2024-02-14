@@ -40,6 +40,8 @@ const SampleModal = (props) => {
     setOpenSampleModal,
     plants,
     searchSpecies,
+    traitSelection,
+    setTraitSelection,
   } = props;
   const [selectedSample, setSelectedSample] = useState("");
   const [activeStep, setActiveStep] = useState(0);
@@ -262,6 +264,8 @@ const SampleModal = (props) => {
               searchSpectraIDs={[{ sample_id: selectedSample }]}
               searchSpecies={searchSpecies}
               type="sample"
+              traitSelection={traitSelection}
+              setTraitSelection={setTraitSelection}
             />
           )}
         </Grid>

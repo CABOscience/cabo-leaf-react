@@ -1,5 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { Button, Typography, Grid, Grow } from "@mui/material";
+import {
+  Button,
+  Typography,
+  Grid,
+  Grow,
+  CircularProgress,
+} from "@mui/material";
 import {
   DataGrid,
   GridColDef,
@@ -23,6 +29,8 @@ import {
 
 const PlantsTable = (props) => {
   const [rows, setRows] = useState([]);
+  const [traitsDownloading, setTraitsDownloading] = useState(false);
+  const [spectraDownloading, setSpectraDownloading] = useState(false);
   const { plants, setOpenSampleModal, setClickedSample } = props;
 
   const [selectedRows, setSelectedRows] = React.useState<GridRowSelectionModel>(
@@ -50,11 +58,13 @@ const PlantsTable = (props) => {
   }, [plants]);
 
   const downloadSpectra = () => {
-    downloadPlantSpectra(selectedRows);
+    setSpectraDownloading(true);
+    downloadPlantSpectra(selectedRows, setSpectraDownloading);
   };
 
   const downloadTraits = () => {
-    downloadSelectedPlantTraitsCSV(selectedRows);
+    setTraitsDownloading(true);
+    downloadSelectedPlantTraitsCSV(selectedRows, setTraitsDownloading);
   };
 
   const OpenDetailsButton = (params) => {
@@ -137,12 +147,22 @@ const PlantsTable = (props) => {
     return (
       <GridToolbarContainer>
         <GridToolbarFilterButton />
-        <Button variant="outlined" size="small" onClick={downloadSpectra}>
+        <Button
+          variant="outlined"
+          size="small"
+          onClick={downloadSpectra}
+          endIcon={spectraDownloading && <CircularProgress size={12} />}
+        >
           <Typography sx={{ fontSize: "12px" }}>
             {t("download_selected_spectra")}
           </Typography>
         </Button>
-        <Button variant="outlined" size="small" onClick={downloadTraits}>
+        <Button
+          variant="outlined"
+          size="small"
+          onClick={downloadTraits}
+          endIcon={traitsDownloading && <CircularProgress size={12} />}
+        >
           <Typography sx={{ fontSize: "12px" }}>
             {t("download_selected_traits")}
           </Typography>
