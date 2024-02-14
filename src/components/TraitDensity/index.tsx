@@ -15,7 +15,7 @@ const TraitDensity = (props: any) => {
     indexCat,
     searchSpecies,
   } = props;
-  const densityRef = useRef(null);
+  const densityRef = useRef(0);
 
   const traitGraph = `trait-${type}-graph-${trait}-${indexCat}`;
 
