@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Paper,
   Tabs,
@@ -36,12 +36,14 @@ import _ from "lodash";
 const SampleModal = (props) => {
   const {
     clickedSample,
+    setClickedSample,
     openSampleModal,
     setOpenSampleModal,
     plants,
     searchSpecies,
     traitSelection,
     setTraitSelection,
+    searchSpectraIDs,
   } = props;
   const [selectedSample, setSelectedSample] = useState("");
   const [activeStep, setActiveStep] = useState(0);
@@ -49,6 +51,7 @@ const SampleModal = (props) => {
   const [images, setImages] = useState([]);
   const [activeTab, setActiveTab] = useState(0);
   const [plantInfo, setPlantInfo]: any = useState({});
+  const ref1 = useRef();
   const maxSteps = images.length;
 
   const handleNext = () => {
@@ -112,6 +115,7 @@ const SampleModal = (props) => {
       open={openSampleModal}
       onClose={() => {
         setOpenSampleModal(false);
+        setClickedSample(0);
         setActiveStep(0);
       }}
       sx={{
@@ -261,11 +265,10 @@ const SampleModal = (props) => {
           {activeTab === 3 && (
             <TraitsOverall
               key="traitsSample"
-              searchSpectraIDs={[{ sample_id: selectedSample }]}
+              searchSpectraIDs={searchSpectraIDs}
+              selectedSample={selectedSample}
               searchSpecies={searchSpecies}
               type="sample"
-              traitSelection={traitSelection}
-              setTraitSelection={setTraitSelection}
             />
           )}
         </Grid>

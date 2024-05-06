@@ -45,7 +45,6 @@ dayjs.extend(customParseFormat);
 export default function SearchBar(props: any) {
   const {
     searchBarValue,
-    getSpeciesList,
     setSearchBarValue,
     searchButtonClicked,
     searchStartDate,

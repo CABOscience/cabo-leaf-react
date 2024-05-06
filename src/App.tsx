@@ -35,7 +35,6 @@ function App() {
   const [showOverallTraits, setShowOverallTraits] = useState<boolean>(false);
   const [openSampleModal, setOpenSampleModal] = useState(false);
   const [clickedSample, setClickedSample] = useState("");
-  const [traitSelection, setTraitSelection] = useState<number>(0);
   const ref1 = useRef(0);
 
   useEffect(() => {
@@ -222,8 +221,7 @@ function App() {
                 showOverallTraits,
                 type: "overall",
               }}
-              traitSelection={traitSelection}
-              setTraitSelection={setTraitSelection}
+              selectedSample={false}
             />
           </CustomPaper>
         </Box>
@@ -254,17 +252,16 @@ function App() {
             plants={plants}
             setClickedSample={setClickedSample}
             setOpenSampleModal={setOpenSampleModal}
-            traitSelection={traitSelection}
           ></PlantsTable>
         )}
         <SampleModal
           openSampleModal={openSampleModal}
           setOpenSampleModal={setOpenSampleModal}
+          searchSpectraIDs={searchSpectraIDs}
           clickedSample={clickedSample}
+          setClickedSample={setClickedSample}
           plants={plants}
           searchSpecies={searchSpecies}
-          traitSelection={traitSelection}
-          setTraitSelection={setTraitSelection}
         ></SampleModal>
       </Box>
     </ThemeProvider>

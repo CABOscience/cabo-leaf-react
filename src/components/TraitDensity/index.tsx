@@ -1,11 +1,11 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, memo } from "react";
 import * as d3 from "d3";
 import { getCABOApi } from "../../helpers/api";
 import { basicColors, traitsTable } from "../../helpers/constants";
 import { Box } from "@mui/material";
 import { t } from "../../helpers/translations";
 
-const TraitDensity = (props: any) => {
+const TraitDensity = memo(function TraitDensity(props: any) {
   const {
     type,
     trait,
@@ -176,8 +176,8 @@ const TraitDensity = (props: any) => {
 
   return (
     <Box
+      key={traitGraph}
       id={traitGraph}
-      ref={densityRef}
       sx={{
         width: "100%",
         height: type === "overall" ? "150px" : "100px",
@@ -185,6 +185,6 @@ const TraitDensity = (props: any) => {
       }}
     ></Box>
   );
-};
+});
 
 export default TraitDensity;

@@ -28,21 +28,22 @@ const TraitsOverall = (props) => {
     carbon_fractions_bags: {},
     pigments_extracts: {},
   };
-  const {
-    searchSpectraIDs,
-    searchSpecies,
-    type,
-    traitSelection,
-    setTraitSelection,
-  } = props;
+  const { searchSpectraIDs, selectedSample, searchSpecies, type } = props;
   const [activeTrait, setActiveTrait] = useState<number>(0);
   const [traitsCat, setTraitsCat] = useState(traitsCatO);
+  const [traitSelection, setTraitSelection] = useState<number>(0);
 
   useEffect(() => {
     let ignore = false;
     setTraitSelection(0);
+    let ids;
     if (searchSpectraIDs) {
-      const ids = searchSpectraIDs.map((s) => s.sample_id);
+      ids = searchSpectraIDs.map((s) => s.sample_id);
+    }
+    if (selectedSample) {
+      ids = [selectedSample];
+    }
+    if (ids) {
       getAllTraits(ids).then((vals) => {
         if (vals && !ignore) {
           var traits = Object.keys(traitsTable);
@@ -73,21 +74,26 @@ const TraitsOverall = (props) => {
         }
       });
     }
+
     return () => {
       ignore = true;
+      setTraitSelection(0);
     };
-  }, [searchSpectraIDs]);
+  }, [searchSpectraIDs, selectedSample]);
 
   useEffect(() => {
-    let tC = { ...traitsCatO };
-    _.mapKeys(traitSelection, (valueType, keyType) => {
-      _.mapKeys(valueType, (value, key) => {
-        if (!isNaN(value)) {
-          tC[traitsTable[key]][key] = value;
-        }
+    if (traitSelection !== 0) {
+      let tC = { ...traitsCatO };
+      _.mapKeys(traitSelection, (valueType, keyType) => {
+        _.mapKeys(valueType, (value, key) => {
+          if (!isNaN(value)) {
+            tC[traitsTable[key]][key] = value;
+          }
+        });
       });
-    });
-    setTraitsCat(tC);
+      setTraitsCat(tC);
+    }
+    return () => setTraitsCat(traitsCatO);
   }, [traitSelection]);
 
   const hasTraitsCat = (cat: string): boolean => {
@@ -160,7 +166,7 @@ const TraitsOverall = (props) => {
                     <Grid
                       item
                       xs={12}
-                      key={indexCat}
+                      key={`grid-${type}-${indexCat}`}
                       hidden={activeTrait !== indexCat}
                       sx={{ overflowY: "scroll" }}
                     >
