@@ -3,13 +3,15 @@ import {
   Grid,
   InputAdornment,
   TextField,
-  Autocomplete,
-  FilledInput,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
   Tabs,
   Tab,
   Select,
   MenuItem,
-  FormControl,
+  Switch,
   Button,
   ButtonGroup,
   Chip,
@@ -51,6 +53,8 @@ export default function SearchBar(props: any) {
     setSearchStartDate,
     searchEndDate,
     setSearchEndDate,
+    projectsSelected,
+    setProjectsSelected,
     spFreq,
   } = props;
   const [options, setOptions] = useState([{ label: "", id: "" }]);
@@ -58,9 +62,11 @@ export default function SearchBar(props: any) {
   const [tab, setTab] = useState(false);
   const [openDateModal, setOpenDateModal] = useState<any>(false);
   const [openMapModal, setOpenMapModal] = useState<any>(false);
+  const [openProjectsModal, setOpenProjectsModal] = useState<any>(false);
   const dateRef: any = useRef(null);
   const modalMapRef: any = useRef(null);
   const mapRef = useRef();
+  const projectsRef = useRef();
 
   useEffect(() => {
     getCABOApi("scientific_names_in_spectra/", {}, "get").then((res: any) => {
@@ -83,6 +89,9 @@ export default function SearchBar(props: any) {
       case 2:
         setOpenMapModal(true);
         break;
+      case 3:
+        setOpenProjectsModal(true);
+        break;
     }
   };
 
@@ -90,6 +99,59 @@ export default function SearchBar(props: any) {
     const map = mapRef.current;
     if (map) {
     }
+  };
+
+  const ProjectsModal = (props) => {
+    const [projList, setProjList] = useState<any>([]);
+    useEffect(() => {
+      if (projectsSelected.length === 0) {
+        getCABOApi("projects/", {}, "get").then((res: any) => {
+          let p = {};
+          res.map((m) => (p[m.project] = true));
+          setProjectsSelected(p);
+        });
+      }
+    }, []);
+
+    const handleProjectToggle = (event) => {
+      setProjectsSelected({
+        ...projectsSelected,
+        [event.target.name]: event.target.checked,
+      });
+    };
+
+    return (
+      <>
+        {Object.keys(projectsSelected).length > 0 &&
+          Object.keys(projectsSelected).map((p: string) => {
+            return (
+              <ListItem
+                key={p}
+                sx={{ paddingTop: 0, paddingBottom: 0, margin: 0 }}
+              >
+                <ListItemIcon>
+                  <Switch
+                    edge="start"
+                    onChange={handleProjectToggle}
+                    tabIndex={-1}
+                    disableRipple
+                    checked={projectsSelected[p]}
+                    name={p}
+                    size="small"
+                  />
+                </ListItemIcon>
+                <ListItemText
+                  sx={{
+                    "& .MuiTypography-root": { fontSize: "0.8rem !important" },
+                  }}
+                >
+                  {p}
+                </ListItemText>
+              </ListItem>
+            );
+          })}
+      </>
+    );
   };
 
   const MyTileLayer = () => {
@@ -146,7 +208,15 @@ export default function SearchBar(props: any) {
               iconPosition="end"
             />
             <Tab value={2} label={t("geography")} onClick={() => clickTab(2)} />
-            <Tab value={3} label={t("project")} onClick={() => clickTab(3)} />
+            <Tab
+              value={3}
+              label={t("project")}
+              onClick={() => clickTab(3)}
+              icon={
+                Object.keys(projectsSelected).length > 0 ? <CheckIcon /> : <></>
+              }
+              iconPosition="end"
+            />
           </Tabs>
         </Grid>
         <Grid container justifyContent="center">
@@ -327,6 +397,40 @@ export default function SearchBar(props: any) {
             </CustomButtonCABO>
           </Container>
         </>
+      </Modal>
+      <Modal
+        ref={projectsRef}
+        open={openProjectsModal}
+        onClose={() => setOpenProjectsModal(false)}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          margin: "40px",
+        }}
+      >
+        <Grid
+          container
+          sx={{ width: "400px", backgroundColor: "white" }}
+          spacing={3}
+        >
+          <Grid item xs={12}>
+            <List>
+              <ProjectsModal projectsSelected={projectsSelected} />
+            </List>
+          </Grid>
+          <Grid item xs={12} sx={{ marginBottom: "30px" }}>
+            <CustomButtonCABO
+              onClick={() => {
+                setOpenProjectsModal(false);
+              }}
+            >
+              OK
+            </CustomButtonCABO>
+          </Grid>
+        </Grid>
       </Modal>
     </>
   );

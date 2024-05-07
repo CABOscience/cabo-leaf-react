@@ -41,7 +41,13 @@ function App() {
     let mounted: boolean = true;
     setShowSpectra(false);
     setShowOverallTraits(false);
-    if (searchBarValue.length === 0) {
+    if (
+      searchBarValue.length === 0 &&
+      geomFilter === "" &&
+      projectsSelected.length === 0 &&
+      searchStartDate === "" &&
+      searchEndDate === ""
+    ) {
       setSearchSpecies([]);
       setIsSearching(false);
     } else {
@@ -193,6 +199,8 @@ function App() {
             setSearchStartDate,
             searchButtonClicked,
             setSearchEndDate,
+            projectsSelected,
+            setProjectsSelected,
           }}
         />
         {isSearching && <Loader />}
