@@ -88,12 +88,22 @@ export const getCABOApiMulti = async (
   return result;
 };
 
-export const processCSVResponse = (data: any) => {
+export const processCSVResponseURL = (data: any) => {
   //const url = window.URL.createObjectURL(new Blob([data.response.data]));
   const link = document.createElement("a");
   link.href = "https://data.caboscience.org/download/" + data;
   link.target = "_blank";
   link.setAttribute("download", "");
+  document.body.appendChild(link);
+  link.click();
+};
+
+const processCSVResponse = (data: any, filename: string) => {
+  const url = window.URL.createObjectURL(new Blob([data]));
+  var link = document.createElement("a");
+  link.setAttribute("href", url);
+  link.target = "_blank";
+  link.setAttribute("download", filename);
   document.body.appendChild(link);
   link.click();
 };
@@ -140,7 +150,7 @@ export const downloadTaxaMeanCSV = async (species_selected: any) => {
     "post"
   ).then((resp: any) => {
     const d = Date.now();
-    processCSVResponse(resp);
+    processCSVResponseURL(resp);
   });
 };
 
@@ -164,7 +174,7 @@ export const downloadSelectedPlantTraitsCSV = async (
   sample_ids,
   loadingSetter
 ) => {
-  let ids = [];
+  let ids: any = [];
   if (sample_ids.length == 1) {
     ids = sample_ids.split(",");
   } else {
@@ -179,7 +189,7 @@ export const downloadSelectedPlantTraitsCSV = async (
     "post"
   ).then((resp) => {
     const d = Date.now();
-    processCSVResponse("cabo_selected_plant_traits_" + d + ".csv");
+    processCSVResponse(resp, "cabo_selected_plant_traits_" + d + ".csv");
     loadingSetter(false);
   });
 };
@@ -193,7 +203,7 @@ export const downloadPlantSpectra = async (sample_ids, loadingSetter) => {
     },
     "post"
   ).then((resp: any) => {
-    processCSVResponse(resp);
+    processCSVResponseURL(resp);
     loadingSetter(false);
   });
 };

@@ -46,6 +46,7 @@ const PlantsTable = (props) => {
         .map(function (m) {
           let ro = m;
           ro.id = m.plant_id;
+          ro.sample_ids = m.sample_ids;
           ro.scientific_name = m.scientific_name;
           ro.site =
             m.sites?.verbatim_site == null
@@ -59,12 +60,18 @@ const PlantsTable = (props) => {
 
   const downloadSpectra = () => {
     setSpectraDownloading(true);
-    downloadPlantSpectra(selectedRows, setSpectraDownloading);
+    let sample_ids = rows
+      .filter((r: any) => selectedRows.includes(r.id))
+      .map((r: any) => r.sample_ids);
+    downloadPlantSpectra(sample_ids, setSpectraDownloading);
   };
 
   const downloadTraits = () => {
     setTraitsDownloading(true);
-    downloadSelectedPlantTraitsCSV(selectedRows, setTraitsDownloading);
+    let sample_ids = rows
+      .filter((r: any) => selectedRows.includes(r.id))
+      .map((r: any) => r.sample_ids);
+    downloadSelectedPlantTraitsCSV(sample_ids, setTraitsDownloading);
   };
 
   const OpenDetailsButton = (params) => {
@@ -89,6 +96,12 @@ const PlantsTable = (props) => {
     {
       field: "id",
       headerName: "Plant ID",
+      width: 200,
+      editable: false,
+    },
+    {
+      field: "sample_ids",
+      headerName: "Sample ID",
       width: 200,
       editable: false,
     },
@@ -219,7 +232,7 @@ const PlantsTable = (props) => {
             pageSizeOptions={[5]}
             checkboxSelection
             disableRowSelectionOnClick
-          />{" "}
+          />
         </Grid>
       </Grid>
     </CustomPaper>
